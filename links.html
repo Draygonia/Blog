@@ -4,38 +4,76 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Links &mdash; Claude Design</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <nav>
-    <div class="nav-inner">
-      <a href="index.html" class="nav-brand">
-        <img src="https://github.com/draygonia.png" alt="" class="avatar avatar-sm">
-        Claude Design
-      </a>
-      <ul class="nav-links">
-        <li><a href="index.html">Posts</a></li>
-        <li><a href="links.html" class="active">Links</a></li>
-        <li><a href="admin.html">Admin</a></li>
-      </ul>
-    </div>
-  </nav>
 
-  <main>
-    <div class="hero">
-      <h1>Links</h1>
-      <p>A curated collection of design resources, tools, and inspiration.</p>
+  <div id="header">
+    <div id="header-inner">
+      <img id="header-avatar" src="https://github.com/draygonia.png" alt="draygonia">
+      <div>
+        <div id="site-title">Claude Design</div>
+        <div id="site-desc">Design Journal &mdash; by draygonia</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="navbar">
+    <div id="navbar-inner">
+      <a href="index.html" class="nav-tab">&#8962; Home</a>
+      <a href="index.html" class="nav-tab">Posts</a>
+      <a href="links.html" class="nav-tab active">Links</a>
+      <a href="admin.html" class="nav-tab">Admin</a>
+    </div>
+  </div>
+
+  <div id="page-wrapper">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> &raquo; Links
     </div>
 
-    <div class="links-grid" id="links-grid">
-      <div class="loading"><div class="spinner"></div> Loading links&hellip;</div>
+    <div id="content-wrapper">
+
+      <div id="main-content">
+        <div class="forum-block">
+          <div class="block-header">
+            <span>Curated Links</span>
+          </div>
+          <div class="block-body">
+            <div id="links-grid">
+              <div class="loading"><div class="spinner"></div> Loading links&hellip;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sidebar">
+        <div class="sidebar-block">
+          <div class="sidebar-header">About</div>
+          <div class="sidebar-body">
+            <img src="https://github.com/draygonia.png" alt="draygonia" class="sidebar-avatar">
+            <p>Design Journal by <strong>draygonia</strong>.</p>
+            <p>A curated collection of design resources, tools, and inspiration.</p>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="sidebar-header">Navigation</div>
+          <div class="sidebar-body" style="padding:0">
+            <ul class="sidebar-nav">
+              <li><a href="index.html">&#9656; Posts</a></li>
+              <li><a href="links.html">&#9656; Links</a></li>
+              <li><a href="admin.html">&#9656; Admin</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
     </div>
-  </main>
+  </div>
 
   <footer>
-    <p>Claude Design &copy; 2026</p>
+    <p>Claude Design &copy; 2026 &mdash; All times are UTC</p>
   </footer>
 
   <script src="js/config.js"></script>

@@ -4,127 +4,147 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin &mdash; Claude Design</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <nav>
-    <div class="nav-inner">
-      <a href="index.html" class="nav-brand">
-        <img src="https://github.com/draygonia.png" alt="" class="avatar avatar-sm">
-        Claude Design
-      </a>
-      <ul class="nav-links">
-        <li><a href="index.html">Posts</a></li>
-        <li><a href="links.html">Links</a></li>
-        <li><a href="admin.html" class="active">Admin</a></li>
-      </ul>
-    </div>
-  </nav>
 
-  <div class="admin-page">
-
-    <!-- Auth -->
-    <div id="auth-section">
-      <div class="auth-box">
-        <h2>Sign In</h2>
-        <p>Enter a GitHub Personal Access Token with <code>repo</code> scope to manage your posts and links. Your token is stored only in your browser session.</p>
-        <div class="form-group">
-          <label>GitHub Token</label>
-          <input type="password" id="token-input" placeholder="ghp_..." onkeydown="if(event.key==='Enter')login()" />
-        </div>
-        <div id="auth-error" class="alert alert-error" style="display:none"></div>
-        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="login()">Sign In</button>
-          <a href="https://github.com/settings/tokens/new?scopes=repo&description=Claude+Design+Admin" target="_blank" rel="noopener" style="font-size:0.8rem;color:var(--text-muted)">Generate a token &rarr;</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Admin panel -->
-    <div id="admin-content" style="display:none">
-      <div class="admin-header">
-        <h1 style="font-size:1.5rem;font-weight:800;letter-spacing:-0.03em">Admin</h1>
-        <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
-      </div>
-
-      <div class="tabs">
-        <div class="tab active" data-tab="posts" onclick="switchTab('posts')">Posts</div>
-        <div class="tab" data-tab="links" onclick="switchTab('links')">Links</div>
-      </div>
-
-      <!-- Posts tab -->
-      <div class="tab-panel active" id="tab-posts">
-        <p class="section-label">Existing Posts</p>
-        <div id="post-list"></div>
-
-        <hr class="divider">
-
-        <div id="post-form-section">
-          <p class="section-label" id="post-form-title">New Post</p>
-          <div id="post-message" style="display:none"></div>
-          <form id="post-form" onsubmit="return false">
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" id="post-title" placeholder="My Post Title" />
-            </div>
-            <div class="form-group">
-              <label>Excerpt</label>
-              <input type="text" id="post-excerpt" placeholder="A short description shown on the homepage&hellip;" />
-            </div>
-            <div class="form-group">
-              <label>Tags <span style="font-weight:400;text-transform:none;letter-spacing:0">(comma-separated)</span></label>
-              <input type="text" id="post-tags" placeholder="design, typography, tools" />
-            </div>
-            <div class="form-group">
-              <label>Content <span style="font-weight:400;text-transform:none;letter-spacing:0">(Markdown)</span></label>
-              <textarea id="post-content" rows="14" placeholder="# Hello World&#10;&#10;Write your post in Markdown..."></textarea>
-            </div>
-            <div style="display:flex;gap:0.75rem;align-items:center">
-              <button type="button" id="save-post-btn" class="btn btn-primary" onclick="savePost()">Publish</button>
-              <button type="button" id="cancel-edit-btn" class="btn btn-secondary" onclick="cancelEditPost()" style="display:none">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- Links tab -->
-      <div class="tab-panel" id="tab-links">
-        <p class="section-label">Existing Links</p>
-        <div id="link-list"></div>
-
-        <hr class="divider">
-
-        <p class="section-label">Add Link</p>
-        <div id="link-message" style="display:none"></div>
-        <form id="link-form" onsubmit="return false">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.25rem">
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" id="link-title" placeholder="Awwwards" />
-            </div>
-            <div class="form-group">
-              <label>Category</label>
-              <input type="text" id="link-category" placeholder="Inspiration" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>URL</label>
-            <input type="url" id="link-url" placeholder="https://..." />
-          </div>
-          <div class="form-group">
-            <label>Description</label>
-            <input type="text" id="link-desc" placeholder="Brief description&hellip;" />
-          </div>
-          <button type="button" id="add-link-btn" class="btn btn-primary" onclick="addLink()">Add Link</button>
-        </form>
+  <div id="header">
+    <div id="header-inner">
+      <img id="header-avatar" src="https://github.com/draygonia.png" alt="draygonia">
+      <div>
+        <div id="site-title">Claude Design</div>
+        <div id="site-desc">Design Journal &mdash; by draygonia</div>
       </div>
     </div>
   </div>
 
+  <div id="navbar">
+    <div id="navbar-inner">
+      <a href="index.html" class="nav-tab">&#8962; Home</a>
+      <a href="index.html" class="nav-tab">Posts</a>
+      <a href="links.html" class="nav-tab">Links</a>
+      <a href="admin.html" class="nav-tab active">Admin</a>
+    </div>
+  </div>
+
+  <div id="page-wrapper">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> &raquo; Admin
+    </div>
+
+    <div class="forum-block" style="max-width:860px;margin:0 auto">
+      <div class="block-header">
+        <span>Admin Panel</span>
+      </div>
+      <div class="block-body" style="padding:16px">
+
+        <div class="admin-page">
+
+          <!-- Auth -->
+          <div id="auth-section">
+            <div class="auth-box">
+              <h2>Sign In</h2>
+              <p>Enter a GitHub Personal Access Token with <code>repo</code> scope to manage your posts and links. Your token is stored only in your browser session.</p>
+              <div class="form-group">
+                <label>GitHub Token</label>
+                <input type="password" id="token-input" placeholder="ghp_..." onkeydown="if(event.key==='Enter')login()" />
+              </div>
+              <div id="auth-error" class="alert alert-error" style="display:none"></div>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="login()">Sign In</button>
+                <a href="https://github.com/settings/tokens/new?scopes=repo&description=Claude+Design+Admin" target="_blank" rel="noopener" style="font-size:10px;color:var(--text-muted)">Generate a token &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin panel -->
+          <div id="admin-content" style="display:none">
+            <div class="admin-header">
+              <strong style="font-size:13px;color:#2a4a80">Admin</strong>
+              <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+            </div>
+
+            <div class="tabs">
+              <div class="tab active" data-tab="posts" onclick="switchTab('posts')">Posts</div>
+              <div class="tab" data-tab="links" onclick="switchTab('links')">Links</div>
+            </div>
+
+            <!-- Posts tab -->
+            <div class="tab-panel active" id="tab-posts">
+              <p class="section-label">Existing Posts</p>
+              <div id="post-list"></div>
+
+              <hr class="divider">
+
+              <div id="post-form-section">
+                <p class="section-label" id="post-form-title">New Post</p>
+                <div id="post-message" style="display:none"></div>
+                <form id="post-form" onsubmit="return false">
+                  <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="post-title" placeholder="My Post Title" />
+                  </div>
+                  <div class="form-group">
+                    <label>Excerpt</label>
+                    <input type="text" id="post-excerpt" placeholder="A short description shown on the homepage&hellip;" />
+                  </div>
+                  <div class="form-group">
+                    <label>Tags <span style="font-weight:400;text-transform:none;letter-spacing:0">(comma-separated)</span></label>
+                    <input type="text" id="post-tags" placeholder="design, typography, tools" />
+                  </div>
+                  <div class="form-group">
+                    <label>Content <span style="font-weight:400;text-transform:none;letter-spacing:0">(Markdown)</span></label>
+                    <textarea id="post-content" rows="14" placeholder="# Hello World&#10;&#10;Write your post in Markdown..."></textarea>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <button type="button" id="save-post-btn" class="btn btn-primary" onclick="savePost()">Publish</button>
+                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary" onclick="cancelEditPost()" style="display:none">Cancel</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Links tab -->
+            <div class="tab-panel" id="tab-links">
+              <p class="section-label">Existing Links</p>
+              <div id="link-list"></div>
+
+              <hr class="divider">
+
+              <p class="section-label">Add Link</p>
+              <div id="link-message" style="display:none"></div>
+              <form id="link-form" onsubmit="return false">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+                  <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="link-title" placeholder="Awwwards" />
+                  </div>
+                  <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="link-category" placeholder="Inspiration" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>URL</label>
+                  <input type="url" id="link-url" placeholder="https://..." />
+                </div>
+                <div class="form-group">
+                  <label>Description</label>
+                  <input type="text" id="link-desc" placeholder="Brief description&hellip;" />
+                </div>
+                <button type="button" id="add-link-btn" class="btn btn-primary" onclick="addLink()">Add Link</button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <footer>
-    <p>Claude Design &copy; 2026</p>
+    <p>Claude Design &copy; 2026 &mdash; All times are UTC</p>
   </footer>
 
   <script src="js/config.js"></script>
