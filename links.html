@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Links &mdash; Claude Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">Claude Design</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Posts</a></li>
+        <li><a href="links.html" class="active">Links</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <h1>Links</h1>
+      <p>A curated collection of design resources, tools, and inspiration.</p>
+    </div>
+
+    <div class="links-grid" id="links-grid">
+      <div class="loading"><div class="spinner"></div> Loading links&hellip;</div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Claude Design &copy; 2026</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/github.js"></script>
+  <script src="js/app.js"></script>
+  <script>loadLinksGrid('links-grid');</script>
+</body>
+</html>

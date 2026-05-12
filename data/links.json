@@ -1,0 +1,28 @@
+{
+  "links": [
+    {
+      "title": "Awwwards",
+      "url": "https://www.awwwards.com",
+      "description": "The awards of design, creativity and innovation on the internet.",
+      "category": "Inspiration"
+    },
+    {
+      "title": "Dribbble",
+      "url": "https://dribbble.com",
+      "description": "Discover the world's top designers and creatives.",
+      "category": "Inspiration"
+    },
+    {
+      "title": "Refactoring UI",
+      "url": "https://www.refactoringui.com",
+      "description": "Make your apps look better without being a designer.",
+      "category": "Learning"
+    },
+    {
+      "title": "Typewolf",
+      "url": "https://www.typewolf.com",
+      "description": "What's trending in type. Font recommendations and type inspiration.",
+      "category": "Typography"
+    }
+  ]
+}

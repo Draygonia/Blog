@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">Claude Design</a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Posts</a></li>
+        <li><a href="links.html">Links</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <h1>Design Journal</h1>
+      <p>Thoughts on design, curated inspiration, and creative exploration.</p>
+    </div>
+
+    <div class="section-header">
+      <h2>Recent Posts</h2>
+    </div>
+
+    <div class="posts-grid" id="posts-grid">
+      <div class="loading"><div class="spinner"></div> Loading posts&hellip;</div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Claude Design &copy; 2026</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/github.js"></script>
+  <script src="js/app.js"></script>
+  <script>loadPostsGrid('posts-grid');</script>
+</body>
+</html>
