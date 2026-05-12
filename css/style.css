@@ -42,11 +42,28 @@ nav {
   height: 56px;
 }
 
-.nav-brand { font-weight: 700; font-size: 1rem; letter-spacing: -0.02em; }
+.nav-brand { font-weight: 700; font-size: 1rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.5rem; }
 
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a { font-size: 0.875rem; color: var(--text-muted); transition: color 0.15s; }
 .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+/* Avatar */
+.avatar { border-radius: 50%; object-fit: cover; display: block; flex-shrink: 0; }
+.avatar-sm { width: 30px; height: 30px; }
+.avatar-lg { width: 68px; height: 68px; border: 2px solid var(--border); }
+
+.hero-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.hero-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
 
 main { max-width: var(--max-width); margin: 0 auto; padding: 0 2rem; }
 
