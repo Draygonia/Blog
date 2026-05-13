@@ -1,28 +1,58 @@
 {
   "links": [
     {
+      "title": "CoinGecko",
+      "url": "https://www.coingecko.com",
+      "description": "Comprehensive cryptocurrency data, prices, charts, and market cap rankings.",
+      "category": "Crypto"
+    },
+    {
+      "title": "CoinMarketCap",
+      "url": "https://coinmarketcap.com",
+      "description": "The world's most-referenced price-tracking website for crypto assets.",
+      "category": "Crypto"
+    },
+    {
+      "title": "DeFiLlama",
+      "url": "https://defillama.com",
+      "description": "DeFi TVL aggregator. Track total value locked across all chains and protocols.",
+      "category": "Crypto"
+    },
+    {
+      "title": "Etherscan",
+      "url": "https://etherscan.io",
+      "description": "The Ethereum blockchain explorer. Look up transactions, addresses, and contracts.",
+      "category": "Crypto"
+    },
+    {
+      "title": "Dune Analytics",
+      "url": "https://dune.com",
+      "description": "Blockchain data analytics. Community-built dashboards for on-chain data.",
+      "category": "Crypto"
+    },
+    {
       "title": "Awwwards",
       "url": "https://www.awwwards.com",
       "description": "The awards of design, creativity and innovation on the internet.",
-      "category": "Inspiration"
+      "category": "Design"
     },
     {
       "title": "Dribbble",
       "url": "https://dribbble.com",
       "description": "Discover the world's top designers and creatives.",
-      "category": "Inspiration"
+      "category": "Design"
     },
     {
       "title": "Refactoring UI",
       "url": "https://www.refactoringui.com",
       "description": "Make your apps look better without being a designer.",
-      "category": "Learning"
+      "category": "Design"
     },
     {
       "title": "Typewolf",
       "url": "https://www.typewolf.com",
       "description": "What's trending in type. Font recommendations and type inspiration.",
-      "category": "Typography"
+      "category": "Design"
     }
   ]
 }

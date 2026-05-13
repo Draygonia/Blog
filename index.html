@@ -3,69 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claude Design - Design Journal</title>
+  <title>Draygonia</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <div id="header">
-    <div id="header-inner">
-      <img id="header-avatar" src="https://github.com/draygonia.png" alt="draygonia">
-      <div>
-        <div id="site-title">Claude Design</div>
-        <div id="site-desc">Design Journal &mdash; by draygonia</div>
-      </div>
+  <div id="site-header">
+    <div id="site-header-inner">
+      <a id="site-logo" href="index.html">
+        <div id="logo-box">D</div>
+        <span id="logo-name">Draygonia</span>
+      </a>
+      <input type="search" id="site-search" placeholder="search...">
     </div>
   </div>
 
-  <div id="navbar">
-    <div id="navbar-inner">
-      <a href="index.html" class="nav-tab active">&#8962; Home</a>
-      <a href="index.html" class="nav-tab">Posts</a>
-      <a href="links.html" class="nav-tab">Links</a>
-      <a href="admin.html" class="nav-tab">Admin</a>
+  <div id="admin-bar">
+    <a href="admin.html" class="admin-btn">+ ADD</a>
+    <a href="admin.html" class="admin-btn" id="manage-btn">MANAGE</a>
+    <button class="admin-btn" onclick="shufflePosts()">&#8652; SHUFFLE</button>
+  </div>
+
+  <div id="site-banner">
+    <div id="banner-logo">
+      <div id="banner-logo-box">D</div>
+      <span id="banner-title">Draygonia</span>
     </div>
   </div>
 
   <div id="page-wrapper">
-    <div class="breadcrumb">
-      <a href="index.html">Home</a> &raquo; Posts
+
+    <div id="main-content">
+      <div id="posts-grid">
+        <div class="loading"><div class="spinner"></div> Loading posts&hellip;</div>
+      </div>
     </div>
 
-    <div id="content-wrapper">
+    <div id="sidebar">
 
-      <div id="main-content">
-        <div class="forum-block">
-          <div class="block-header">
-            <span>Recent Posts</span>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-accent"></div>
+          <span class="panel-title">About</span>
+          <div class="panel-actions">
+            <span class="panel-action">&#128279;</span>
+            <span class="panel-action">&#9660;</span>
           </div>
-          <div class="block-body">
-            <div id="posts-grid">
-              <div class="loading"><div class="spinner"></div> Loading posts&hellip;</div>
-            </div>
+        </div>
+        <div class="panel-body">
+          <img src="https://github.com/draygonia.png" alt="Draygonia" class="user-avatar">
+          <div class="user-name">Draygonia</div>
+          <div class="user-meta">site admin &middot; est. 2002</div>
+          <div class="user-status"><span class="status-dot"></span> online now</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-accent"></div>
+          <span class="panel-title">Theme</span>
+          <div class="panel-actions">
+            <span class="panel-action">&#128279;</span>
+            <span class="panel-action">&#9660;</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="theme-swatches">
+            <div class="swatch active" style="background:#e07a10" onclick="setTheme('#e07a10')" title="Orange"></div>
+            <div class="swatch" style="background:#8b2020" onclick="setTheme('#8b2020')" title="Red"></div>
+            <div class="swatch" style="background:#1e6b30" onclick="setTheme('#1e6b30')" title="Green"></div>
+            <div class="swatch" style="background:#d0d8e0" onclick="setTheme('#d0d8e0')" title="Silver"></div>
+            <div class="swatch" style="background:#1a1a2a" onclick="setTheme('#1a1a2a')" title="Dark"></div>
+            <div class="swatch" style="background:#6a2090" onclick="setTheme('#6a2090')" title="Purple"></div>
           </div>
         </div>
       </div>
 
-      <div id="sidebar">
-        <div class="sidebar-block">
-          <div class="sidebar-header">About</div>
-          <div class="sidebar-body">
-            <img src="https://github.com/draygonia.png" alt="draygonia" class="sidebar-avatar">
-            <p>Design Journal by <strong>draygonia</strong>.</p>
-            <p>Thoughts on design, curated inspiration, and creative exploration.</p>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-accent"></div>
+          <span class="panel-title">Compose New Post</span>
+          <div class="panel-actions">
+            <span class="panel-action">&#128279;</span>
+            <span class="panel-action">&#9660;</span>
           </div>
         </div>
-
-        <div class="sidebar-block">
-          <div class="sidebar-header">Navigation</div>
-          <div class="sidebar-body" style="padding:0">
-            <ul class="sidebar-nav">
-              <li><a href="index.html">&#9656; Posts</a></li>
-              <li><a href="links.html">&#9656; Links</a></li>
-              <li><a href="admin.html">&#9656; Admin</a></li>
-            </ul>
-          </div>
+        <div class="panel-body" style="padding:8px">
+          <a href="admin.html" class="compose-area" style="text-decoration:none">
+            <div class="compose-placeholder">DROP A<br>LINK,<br>IMAGE,<br>VIDEO,<br>OR<br>FILE &mdash;<br>OR PASTE<br>A URL<br>BELOW</div>
+            <div class="compose-links">
+              <a href="admin.html">markdown</a><br>
+              <a href="admin.html">images</a><br>
+              <a href="admin.html">links</a>
+            </div>
+          </a>
         </div>
       </div>
 
@@ -73,12 +104,39 @@
   </div>
 
   <footer>
-    <p>Claude Design &copy; 2026 &mdash; All times are UTC</p>
+    <p>Draygonia &copy; 2026</p>
   </footer>
 
   <script src="js/config.js"></script>
   <script src="js/github.js"></script>
   <script src="js/app.js"></script>
-  <script>loadPostsGrid('posts-grid');</script>
+  <script>
+    loadPostsGrid('posts-grid');
+
+    function shufflePosts() {
+      const grid = document.getElementById('posts-grid');
+      const cards = Array.from(grid.children);
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        grid.appendChild(cards[j]);
+        cards.splice(j, 1);
+      }
+    }
+
+    function setTheme(color) {
+      document.documentElement.style.setProperty('--accent', color);
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      event.target.classList.add('active');
+      localStorage.setItem('theme-accent', color);
+    }
+
+    const savedAccent = localStorage.getItem('theme-accent');
+    if (savedAccent) {
+      document.documentElement.style.setProperty('--accent', savedAccent);
+      document.querySelectorAll('.swatch').forEach(s => {
+        s.classList.toggle('active', s.style.background === savedAccent);
+      });
+    }
+  </script>
 </body>
 </html>
