@@ -22,6 +22,7 @@
     <a href="index.html" class="admin-btn">&#8592; BACK</a>
     <a href="links.html" class="admin-btn">LINKS</a>
     <a href="admin.html" class="admin-btn" style="border-color:var(--accent);color:var(--text)">ADMIN</a>
+    <button class="admin-btn" id="mobile-btn" onclick="toggleMobileView()">&#128241; MOBILE</button>
   </div>
 
   <div id="site-banner">
@@ -37,13 +38,9 @@
       <div class="panel-header">
         <div class="panel-accent"></div>
         <span class="panel-title">Admin Panel</span>
-        <div class="panel-actions">
-          <span class="panel-action">&#128279;</span>
-        </div>
       </div>
       <div class="panel-body">
 
-        <!-- Auth -->
         <div id="auth-section">
           <div class="auth-box">
             <h2>Sign In</h2>
@@ -60,7 +57,6 @@
           </div>
         </div>
 
-        <!-- Admin panel -->
         <div id="admin-content" style="display:none">
           <div class="admin-header">
             <strong style="font-size:13px;color:var(--accent)">Admin</strong>
@@ -72,13 +68,10 @@
             <div class="tab" data-tab="links" onclick="switchTab('links')">Links</div>
           </div>
 
-          <!-- Posts tab -->
           <div class="tab-panel active" id="tab-posts">
             <p class="section-label">Existing Posts</p>
             <div id="post-list"></div>
-
             <hr class="divider">
-
             <div id="post-form-section">
               <p class="section-label" id="post-form-title">New Post</p>
               <div id="post-message" style="display:none"></div>
@@ -107,13 +100,10 @@
             </div>
           </div>
 
-          <!-- Links tab -->
           <div class="tab-panel" id="tab-links">
             <p class="section-label">Existing Links</p>
             <div id="link-list"></div>
-
             <hr class="divider">
-
             <p class="section-label">Add Link</p>
             <div id="link-message" style="display:none"></div>
             <form id="link-form" onsubmit="return false">
@@ -153,9 +143,6 @@
   <script src="js/github.js"></script>
   <script src="js/app.js"></script>
   <script src="js/admin.js"></script>
-  <script>
-    const savedAccent = localStorage.getItem('theme-accent');
-    if (savedAccent) document.documentElement.style.setProperty('--accent', savedAccent);
-  </script>
+  <script src="js/theme.js"></script>
 </body>
 </html>

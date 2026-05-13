@@ -22,6 +22,7 @@
     <a href="admin.html" class="admin-btn">+ ADD</a>
     <a href="admin.html" class="admin-btn" id="manage-btn">MANAGE</a>
     <button class="admin-btn" onclick="shufflePosts()">&#8652; SHUFFLE</button>
+    <button class="admin-btn" id="mobile-btn" onclick="toggleMobileView()">&#128241; MOBILE</button>
   </div>
 
   <div id="site-banner">
@@ -46,12 +47,15 @@
           <div class="panel-accent"></div>
           <span class="panel-title">About</span>
           <div class="panel-actions">
-            <span class="panel-action">&#128279;</span>
-            <span class="panel-action">&#9660;</span>
+            <span class="panel-action" title="Copy link">&#128279;</span>
+            <span class="panel-action" title="Collapse">&#9660;</span>
           </div>
         </div>
         <div class="panel-body">
-          <img src="https://github.com/draygonia.png" alt="Draygonia" class="user-avatar">
+          <div class="avatar-wrapper" onclick="changeAvatar()" title="Click to change avatar">
+            <img src="https://github.com/draygonia.png" alt="Draygonia" class="user-avatar" id="user-avatar">
+            <div class="avatar-edit-overlay">&#9998;</div>
+          </div>
           <div class="user-name">Draygonia</div>
           <div class="user-meta">site admin &middot; est. 2002</div>
           <div class="user-status"><span class="status-dot"></span> online now</div>
@@ -63,18 +67,22 @@
           <div class="panel-accent"></div>
           <span class="panel-title">Theme</span>
           <div class="panel-actions">
-            <span class="panel-action">&#128279;</span>
-            <span class="panel-action">&#9660;</span>
+            <span class="panel-action" title="Collapse">&#9660;</span>
           </div>
         </div>
         <div class="panel-body">
+          <div class="theme-sub-label">Color</div>
           <div class="theme-swatches">
-            <div class="swatch active" style="background:#e07a10" onclick="setTheme('#e07a10')" title="Orange"></div>
-            <div class="swatch" style="background:#8b2020" onclick="setTheme('#8b2020')" title="Red"></div>
-            <div class="swatch" style="background:#1e6b30" onclick="setTheme('#1e6b30')" title="Green"></div>
-            <div class="swatch" style="background:#d0d8e0" onclick="setTheme('#d0d8e0')" title="Silver"></div>
-            <div class="swatch" style="background:#1a1a2a" onclick="setTheme('#1a1a2a')" title="Dark"></div>
-            <div class="swatch" style="background:#6a2090" onclick="setTheme('#6a2090')" title="Purple"></div>
+            <div class="swatch active" style="background:#e07a10" data-theme="orange" onclick="applyTheme('orange')" title="Orange"></div>
+            <div class="swatch" style="background:#cc3020" data-theme="red" onclick="applyTheme('red')" title="Red"></div>
+            <div class="swatch" style="background:#2ea840" data-theme="green" onclick="applyTheme('green')" title="Green"></div>
+            <div class="swatch" style="background:#c0ccd8" data-theme="silver" onclick="applyTheme('silver')" title="Silver"></div>
+            <div class="swatch" style="background:#1a1a2a" data-theme="dark" onclick="applyTheme('dark')" title="Dark"></div>
+            <div class="swatch" style="background:#8a30c8" data-theme="purple" onclick="applyTheme('purple')" title="Purple"></div>
+          </div>
+          <div class="theme-sub-label">Banner</div>
+          <div class="banner-options" id="banner-options">
+            <!-- populated by theme.js -->
           </div>
         </div>
       </div>
@@ -84,12 +92,11 @@
           <div class="panel-accent"></div>
           <span class="panel-title">Compose New Post</span>
           <div class="panel-actions">
-            <span class="panel-action">&#128279;</span>
-            <span class="panel-action">&#9660;</span>
+            <span class="panel-action" title="Collapse">&#9660;</span>
           </div>
         </div>
         <div class="panel-body" style="padding:8px">
-          <a href="admin.html" class="compose-area" style="text-decoration:none">
+          <a href="admin.html" class="compose-area">
             <div class="compose-placeholder">DROP A<br>LINK,<br>IMAGE,<br>VIDEO,<br>OR<br>FILE &mdash;<br>OR PASTE<br>A URL<br>BELOW</div>
             <div class="compose-links">
               <a href="admin.html">markdown</a><br>
@@ -110,32 +117,37 @@
   <script src="js/config.js"></script>
   <script src="js/github.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/theme.js"></script>
   <script>
     loadPostsGrid('posts-grid');
 
+    // Populate banner options from BANNERS array
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('banner-options');
+      BANNERS.forEach(function(b) {
+        const el = document.createElement('div');
+        el.className = 'banner-opt';
+        el.dataset.banner = b.id;
+        el.style.background = b.preview;
+        el.title = b.label;
+        el.onclick = function() { applyBanner(b.id, b.css); };
+        container.appendChild(el);
+      });
+      const customBtn = document.createElement('button');
+      customBtn.className = 'banner-custom-btn';
+      customBtn.textContent = '+ URL';
+      customBtn.onclick = promptCustomBanner;
+      container.appendChild(customBtn);
+    });
+
     function shufflePosts() {
       const grid = document.getElementById('posts-grid');
-      const cards = Array.from(grid.children);
+      const cards = Array.from(grid.querySelectorAll('.post-card'));
       for (let i = cards.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         grid.appendChild(cards[j]);
-        cards.splice(j, 1);
+        [cards[i], cards[j]] = [cards[j], cards[i]];
       }
-    }
-
-    function setTheme(color) {
-      document.documentElement.style.setProperty('--accent', color);
-      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
-      event.target.classList.add('active');
-      localStorage.setItem('theme-accent', color);
-    }
-
-    const savedAccent = localStorage.getItem('theme-accent');
-    if (savedAccent) {
-      document.documentElement.style.setProperty('--accent', savedAccent);
-      document.querySelectorAll('.swatch').forEach(s => {
-        s.classList.toggle('active', s.style.background === savedAccent);
-      });
     }
   </script>
 </body>

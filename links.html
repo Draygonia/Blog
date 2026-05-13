@@ -19,9 +19,9 @@
   </div>
 
   <div id="admin-bar">
-    <a href="admin.html" class="admin-btn">+ ADD</a>
+    <a href="index.html" class="admin-btn">&#8592; POSTS</a>
     <a href="admin.html" class="admin-btn">MANAGE</a>
-    <a href="index.html" class="admin-btn">&#8652; POSTS</a>
+    <button class="admin-btn" id="mobile-btn" onclick="toggleMobileView()">&#128241; MOBILE</button>
   </div>
 
   <div id="site-banner">
@@ -39,7 +39,7 @@
           <div class="panel-accent"></div>
           <span class="panel-title">Links</span>
         </div>
-        <div class="panel-body" style="padding:0">
+        <div class="panel-body" style="padding:0 12px 12px">
           <div id="links-grid">
             <div class="loading"><div class="spinner"></div> Loading links&hellip;</div>
           </div>
@@ -54,12 +54,14 @@
           <div class="panel-accent"></div>
           <span class="panel-title">About</span>
           <div class="panel-actions">
-            <span class="panel-action">&#128279;</span>
             <span class="panel-action">&#9660;</span>
           </div>
         </div>
         <div class="panel-body">
-          <img src="https://github.com/draygonia.png" alt="Draygonia" class="user-avatar">
+          <div class="avatar-wrapper" onclick="changeAvatar()" title="Click to change avatar">
+            <img src="https://github.com/draygonia.png" alt="Draygonia" class="user-avatar" id="user-avatar">
+            <div class="avatar-edit-overlay">&#9998;</div>
+          </div>
           <div class="user-name">Draygonia</div>
           <div class="user-meta">site admin &middot; est. 2002</div>
           <div class="user-status"><span class="status-dot"></span> online now</div>
@@ -71,7 +73,7 @@
           <div class="panel-accent"></div>
           <span class="panel-title">Navigate</span>
         </div>
-        <div class="panel-body" style="padding:8px 0">
+        <div class="panel-body" style="padding:6px 0">
           <a href="index.html" style="display:block;padding:6px 12px;font-size:12px;color:var(--text-muted)">&#9656; Posts</a>
           <a href="links.html" style="display:block;padding:6px 12px;font-size:12px;color:var(--accent)">&#9656; Links</a>
           <a href="admin.html" style="display:block;padding:6px 12px;font-size:12px;color:var(--text-muted)">&#9656; Admin</a>
@@ -88,10 +90,7 @@
   <script src="js/config.js"></script>
   <script src="js/github.js"></script>
   <script src="js/app.js"></script>
-  <script>
-    loadLinksGrid('links-grid');
-    const savedAccent = localStorage.getItem('theme-accent');
-    if (savedAccent) document.documentElement.style.setProperty('--accent', savedAccent);
-  </script>
+  <script src="js/theme.js"></script>
+  <script>loadLinksGrid('links-grid');</script>
 </body>
 </html>
