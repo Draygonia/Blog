@@ -66,6 +66,7 @@
           <div class="tabs">
             <div class="tab active" data-tab="posts" onclick="switchTab('posts')">Posts</div>
             <div class="tab" data-tab="links" onclick="switchTab('links')">Links</div>
+            <div class="tab" data-tab="wallets" onclick="switchTab('wallets')">Wallets</div>
           </div>
 
           <div class="tab-panel active" id="tab-posts">
@@ -128,6 +129,35 @@
               <button type="button" id="add-link-btn" class="btn btn-primary" onclick="addLink()">Add Link</button>
             </form>
           </div>
+
+          <!-- Wallets tab -->
+          <div class="tab-panel" id="tab-wallets">
+            <p class="section-label">Existing Wallets</p>
+            <div id="wallet-list"></div>
+
+            <hr class="divider">
+
+            <p class="section-label">Add Wallet</p>
+            <div id="wallet-message" style="display:none"></div>
+            <form id="wallet-form" onsubmit="return false">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+                <div class="form-group">
+                  <label>Crypto Name</label>
+                  <input type="text" id="wallet-name" placeholder="Bitcoin" />
+                </div>
+                <div class="form-group">
+                  <label>Symbol</label>
+                  <input type="text" id="wallet-symbol" placeholder="BTC" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Wallet Address</label>
+                <input type="text" id="wallet-address" placeholder="bc1q..." style="font-family:'Courier New',monospace" />
+              </div>
+              <button type="button" id="add-wallet-btn" class="btn btn-primary" onclick="addWallet()">Add Wallet</button>
+            </form>
+          </div>
+
         </div>
 
       </div>

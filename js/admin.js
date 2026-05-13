@@ -21,7 +21,7 @@ function showAuth() {
 async function showAdmin() {
   document.getElementById('auth-section').style.display = 'none';
   document.getElementById('admin-content').style.display = '';
-  await Promise.all([loadPosts(), loadLinks()]);
+  await Promise.all([loadPosts(), loadLinks(), loadWallets()]);
 }
 
 async function login() {
@@ -237,6 +237,82 @@ async function saveLinks(btnId, btnLabel) {
   } catch (err) {
     showMessage('link-message', 'error', `Error: ${err.message}`);
     await loadLinks();
+  } finally {
+    if (btn) { btn.textContent = btnLabel; btn.disabled = false; }
+  }
+}
+
+// ---- Wallets ----
+
+let walletsData = { wallets: [] };
+let walletsSha = null;
+
+async function loadWallets() {
+  const listEl = document.getElementById('wallet-list');
+  if (!listEl) return;
+  listEl.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
+  try {
+    const { content, sha } = await gh.getFile('data/wallets.json');
+    walletsData = JSON.parse(content);
+    walletsSha = sha;
+    renderWalletList();
+  } catch {
+    walletsData = { wallets: [] };
+    walletsSha = null;
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">No wallets yet.</p>';
+  }
+}
+
+function renderWalletList() {
+  const listEl = document.getElementById('wallet-list');
+  if (!listEl) return;
+  if (!walletsData.wallets || walletsData.wallets.length === 0) {
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">No wallets yet.</p>';
+    return;
+  }
+  listEl.innerHTML = walletsData.wallets.map((w, i) => `
+    <div class="admin-list-item">
+      <div class="admin-list-item-info">
+        <div class="admin-list-item-title">${escHtml(w.name)}${w.symbol ? ` <span style="color:var(--text-muted);font-weight:400">(${escHtml(w.symbol.toUpperCase())})</span>` : ''}</div>
+        <div class="admin-list-item-meta" style="font-family:monospace">${escHtml(w.address)}</div>
+      </div>
+      <div class="admin-list-item-actions">
+        <button class="btn btn-danger btn-sm" onclick="deleteWallet(${i})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function addWallet() {
+  const name = document.getElementById('wallet-name').value.trim();
+  const symbol = document.getElementById('wallet-symbol').value.trim();
+  const address = document.getElementById('wallet-address').value.trim();
+
+  if (!name || !address) { showMessage('wallet-message', 'error', 'Name and address are required.'); return; }
+
+  walletsData.wallets = [...(walletsData.wallets || []), { name, symbol, address }];
+  await saveWallets('add-wallet-btn', 'Add Wallet');
+}
+
+async function deleteWallet(index) {
+  if (!confirm('Remove this wallet?')) return;
+  walletsData.wallets.splice(index, 1);
+  await saveWallets(null, null);
+}
+
+async function saveWallets(btnId, btnLabel) {
+  const btn = btnId ? document.getElementById(btnId) : null;
+  if (btn) { btn.textContent = 'Saving...'; btn.disabled = true; }
+
+  try {
+    const content = JSON.stringify(walletsData, null, 2);
+    await gh.putFile('data/wallets.json', content, 'Update wallets', walletsSha);
+    showMessage('wallet-message', 'success', 'Wallets updated!');
+    if (btnId === 'add-wallet-btn') document.getElementById('wallet-form').reset();
+    await loadWallets();
+  } catch (err) {
+    showMessage('wallet-message', 'error', `Error: ${err.message}`);
+    await loadWallets();
   } finally {
     if (btn) { btn.textContent = btnLabel; btn.disabled = false; }
   }

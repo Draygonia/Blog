@@ -90,6 +90,19 @@
       <div class="panel">
         <div class="panel-header">
           <div class="panel-accent"></div>
+          <span class="panel-title">Wallets</span>
+          <div class="panel-actions">
+            <span class="panel-action" title="Collapse">&#9660;</span>
+          </div>
+        </div>
+        <div class="panel-body" style="padding:8px">
+          <div id="wallets-list"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-accent"></div>
           <span class="panel-title">Compose New Post</span>
           <div class="panel-actions">
             <span class="panel-action" title="Collapse">&#9660;</span>
@@ -117,9 +130,11 @@
   <script src="js/config.js"></script>
   <script src="js/github.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/wallets.js"></script>
   <script src="js/theme.js"></script>
   <script>
     loadPostsGrid('posts-grid');
+    loadWalletsPanel('wallets-list');
 
     // Populate banner options from BANNERS array
     document.addEventListener('DOMContentLoaded', function() {
