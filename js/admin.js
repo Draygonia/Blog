@@ -318,6 +318,152 @@ async function saveWallets(btnId, btnLabel) {
   }
 }
 
+// ---- Banner ----
+
+let bannerData = { type: 'gradient', height: 160, posX: 50, posY: 50 };
+let bannerSha = null;
+let bannerPendingBase64 = null;
+let bannerPendingExt = null;
+
+async function loadBannerTab() {
+  try {
+    const { content, sha } = await gh.getFile('data/banner.json');
+    bannerData = JSON.parse(content);
+    bannerSha = sha;
+  } catch {
+    bannerData = { type: 'gradient', height: 160, posX: 50, posY: 50 };
+    bannerSha = null;
+  }
+  syncBannerUI();
+}
+
+function syncBannerUI() {
+  const h = document.getElementById('banner-height');
+  const hv = document.getElementById('banner-height-val');
+  const px = document.getElementById('banner-pos-x');
+  const pxv = document.getElementById('banner-pos-x-val');
+  const py = document.getElementById('banner-pos-y');
+  const pyv = document.getElementById('banner-pos-y-val');
+  if (h) { h.value = bannerData.height || 160; hv.textContent = h.value + 'px'; }
+  if (px) { px.value = bannerData.posX ?? 50; pxv.textContent = px.value + '%'; }
+  if (py) { py.value = bannerData.posY ?? 50; pyv.textContent = py.value + '%'; }
+  updateBannerPreview();
+}
+
+function updateBannerPreview() {
+  const preview = document.getElementById('banner-preview');
+  if (!preview) return;
+  const h = parseInt(document.getElementById('banner-height')?.value || bannerData.height || 160);
+  const px = parseInt(document.getElementById('banner-pos-x')?.value ?? bannerData.posX ?? 50);
+  const py = parseInt(document.getElementById('banner-pos-y')?.value ?? bannerData.posY ?? 50);
+  preview.style.height = h + 'px';
+  if (bannerPendingBase64) {
+    preview.style.backgroundImage = `url(data:image/${bannerPendingExt};base64,${bannerPendingBase64})`;
+    preview.style.backgroundSize = 'cover';
+    preview.style.backgroundPosition = `${px}% ${py}%`;
+    preview.style.backgroundRepeat = 'no-repeat';
+  } else if (bannerData.type === 'image' && bannerData.src) {
+    const url = rawUrl(bannerData.src);
+    preview.style.backgroundImage = `url(${JSON.stringify(url)})`;
+    preview.style.backgroundSize = 'cover';
+    preview.style.backgroundPosition = `${px}% ${py}%`;
+    preview.style.backgroundRepeat = 'no-repeat';
+  } else {
+    preview.style.backgroundImage = '';
+    preview.style.backgroundPosition = '';
+    preview.style.backgroundSize = '';
+  }
+}
+
+function initBannerDrop() {
+  const zone = document.getElementById('banner-drop-zone');
+  if (!zone) return;
+
+  zone.addEventListener('click', () => {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'image/*';
+    inp.onchange = e => handleBannerFile(e.target.files[0]);
+    inp.click();
+  });
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drop-active'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drop-active'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drop-active');
+    const file = e.dataTransfer.files[0];
+    if (file) handleBannerFile(file);
+  });
+}
+
+function handleBannerFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    const base64 = dataUrl.split(',')[1];
+    bannerPendingBase64 = base64;
+    bannerPendingExt = ext;
+    const zone = document.getElementById('banner-drop-zone');
+    if (zone) zone.textContent = `Ready: ${escHtml(file.name)}`;
+    updateBannerPreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveBanner() {
+  const btn = document.getElementById('banner-save-btn');
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
+  try {
+    const h = parseInt(document.getElementById('banner-height').value);
+    const px = parseInt(document.getElementById('banner-pos-x').value);
+    const py = parseInt(document.getElementById('banner-pos-y').value);
+
+    if (bannerPendingBase64) {
+      const imgPath = `images/banners/banner.${bannerPendingExt}`;
+      const imgSha = await gh.getSha(imgPath);
+      await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha);
+      bannerData = { type: 'image', src: imgPath, height: h, posX: px, posY: py };
+      bannerPendingBase64 = null;
+      bannerPendingExt = null;
+    } else {
+      bannerData = { ...bannerData, height: h, posX: px, posY: py };
+    }
+
+    const newSha = await gh.getSha('data/banner.json');
+    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update banner config', newSha);
+    bannerSha = newSha;
+    showMessage('banner-message', 'success', 'Banner saved!');
+    syncBannerUI();
+  } catch (err) {
+    showMessage('banner-message', 'error', `Error: ${err.message}`);
+  } finally {
+    btn.textContent = 'Set as Banner';
+    btn.disabled = false;
+  }
+}
+
+async function resetBanner() {
+  if (!confirm('Reset banner to default gradient?')) return;
+  bannerPendingBase64 = null;
+  bannerPendingExt = null;
+  bannerData = { type: 'gradient', height: 160, posX: 50, posY: 50 };
+  try {
+    const newSha = await gh.getSha('data/banner.json');
+    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Reset banner to gradient', newSha);
+    showMessage('banner-message', 'success', 'Banner reset!');
+    const zone = document.getElementById('banner-drop-zone');
+    if (zone) zone.textContent = 'Drop image here or click to browse';
+    syncBannerUI();
+  } catch (err) {
+    showMessage('banner-message', 'error', `Error: ${err.message}`);
+  }
+}
+
 // ---- Helpers ----
 
 function showMessage(id, type, text) {
@@ -329,9 +475,16 @@ function showMessage(id, type, text) {
   if (type === 'success') setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
 
+let bannerTabLoaded = false;
+
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${name}`));
+  if (name === 'banner' && !bannerTabLoaded) {
+    bannerTabLoaded = true;
+    initBannerDrop();
+    loadBannerTab();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

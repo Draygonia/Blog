@@ -67,6 +67,7 @@
             <div class="tab active" data-tab="posts" onclick="switchTab('posts')">Posts</div>
             <div class="tab" data-tab="links" onclick="switchTab('links')">Links</div>
             <div class="tab" data-tab="wallets" onclick="switchTab('wallets')">Wallets</div>
+            <div class="tab" data-tab="banner" onclick="switchTab('banner')">Banner</div>
           </div>
 
           <div class="tab-panel active" id="tab-posts">
@@ -158,6 +159,37 @@
             </form>
           </div>
 
+          <!-- Banner tab -->
+          <div class="tab-panel" id="tab-banner">
+            <p class="section-label">Banner Image</p>
+            <div id="banner-drop-zone" class="banner-drop-zone">Drop image here or click to browse</div>
+
+            <p class="section-label" style="margin-top:16px">Preview</p>
+            <div id="banner-preview" class="banner-preview"></div>
+
+            <div class="banner-control">
+              <label>Height: <span id="banner-height-val">160px</span></label>
+              <input type="range" id="banner-height" min="60" max="400" value="160"
+                oninput="document.getElementById('banner-height-val').textContent=this.value+'px';updateBannerPreview()">
+            </div>
+            <div class="banner-control">
+              <label>Horizontal position: <span id="banner-pos-x-val">50%</span></label>
+              <input type="range" id="banner-pos-x" min="0" max="100" value="50"
+                oninput="document.getElementById('banner-pos-x-val').textContent=this.value+'%';updateBannerPreview()">
+            </div>
+            <div class="banner-control">
+              <label>Vertical position: <span id="banner-pos-y-val">50%</span></label>
+              <input type="range" id="banner-pos-y" min="0" max="100" value="50"
+                oninput="document.getElementById('banner-pos-y-val').textContent=this.value+'%';updateBannerPreview()">
+            </div>
+
+            <div id="banner-message" style="display:none"></div>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button type="button" id="banner-save-btn" class="btn btn-primary" onclick="saveBanner()">Set as Banner</button>
+              <button type="button" class="btn btn-secondary" onclick="resetBanner()">Reset to Gradient</button>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -173,6 +205,7 @@
   <script src="js/github.js"></script>
   <script src="js/app.js"></script>
   <script src="js/admin.js"></script>
+  <script src="js/banner.js"></script>
   <script src="js/theme.js"></script>
 </body>
 </html>
