@@ -1,22 +1,23 @@
 {
   "links": [
     {
+
       "title": "Dribbble",
       "url": "https://dribbble.com",
       "description": "Discover the world's top designers and creatives.",
-      "category": "Inspiration"
+      "category": "Design"
     },
     {
       "title": "Refactoring UI",
       "url": "https://www.refactoringui.com",
       "description": "Make your apps look better without being a designer.",
-      "category": "Learning"
+      "category": "Design"
     },
     {
       "title": "Typewolf",
       "url": "https://www.typewolf.com",
       "description": "What's trending in type. Font recommendations and type inspiration.",
-      "category": "Typography"
+      "category": "Design"
     }
   ]
 }

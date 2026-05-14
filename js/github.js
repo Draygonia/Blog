@@ -52,6 +52,37 @@ class GitHub {
     return res.json();
   }
 
+  async getSha(path) {
+    const { owner, repo, branch } = CONFIG;
+    const res = await fetch(
+      `${this.base}/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
+      { headers: this.headers }
+    );
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    const data = await res.json();
+    return data.sha || null;
+  }
+
+  async putRaw(path, base64Content, message, sha) {
+    const { owner, repo, branch } = CONFIG;
+    const body = { message, content: base64Content, branch };
+    if (sha) body.sha = sha;
+    const res = await fetch(
+      `${this.base}/repos/${owner}/${repo}/contents/${path}`,
+      {
+        method: 'PUT',
+        headers: { ...this.headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }
+    );
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `${res.status} ${res.statusText}`);
+    }
+    return res.json();
+  }
+
   async deleteFile(path, message, sha) {
     const { owner, repo, branch } = CONFIG;
     const res = await fetch(
