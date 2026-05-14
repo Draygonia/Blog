@@ -11,7 +11,7 @@
   <div id="site-header">
     <div id="site-header-inner">
       <a id="site-logo" href="index.html">
-        <div id="logo-box">D</div>
+        <div id="logo-box"><img id="site-logo-img" class="logo-img" style="display:none" alt=""><span class="logo-letter">D</span></div>
         <span id="logo-name">Draygonia</span>
       </a>
       <input type="search" id="site-search" placeholder="search...">
@@ -27,7 +27,7 @@
 
   <div id="site-banner">
     <div id="banner-logo">
-      <div id="banner-logo-box">D</div>
+      <div id="banner-logo-box"><img id="banner-logo-img" class="logo-img" style="display:none" alt=""><span class="logo-letter">D</span></div>
       <span id="banner-title">Draygonia</span>
     </div>
   </div>
@@ -67,7 +67,7 @@
             <div class="tab active" data-tab="posts" onclick="switchTab('posts')">Posts</div>
             <div class="tab" data-tab="links" onclick="switchTab('links')">Links</div>
             <div class="tab" data-tab="wallets" onclick="switchTab('wallets')">Wallets</div>
-            <div class="tab" data-tab="banner" onclick="switchTab('banner')">Banner</div>
+            <div class="tab" data-tab="banner" onclick="switchTab('banner')">Banner + Avatar</div>
           </div>
 
           <div class="tab-panel active" id="tab-posts">
@@ -187,6 +187,20 @@
             <div style="display:flex;gap:8px;margin-top:12px">
               <button type="button" id="banner-save-btn" class="btn btn-primary" onclick="saveBanner()">Set as Banner</button>
               <button type="button" class="btn btn-secondary" onclick="resetBanner()">Reset to Gradient</button>
+            </div>
+
+            <hr class="divider" style="margin:20px 0">
+
+            <p class="section-label">Logo Avatar</p>
+            <p style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Replaces the &ldquo;D&rdquo; box in the header and banner. Square images work best.</p>
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+              <img id="avatar-preview" class="avatar-admin-preview" style="display:none" alt="Avatar preview">
+              <div id="avatar-drop-zone" class="banner-drop-zone" style="flex:1">Drop image here or click to browse</div>
+            </div>
+            <div id="avatar-message" style="display:none"></div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button type="button" id="avatar-save-btn" class="btn btn-primary" onclick="saveAvatar()">Set Avatar</button>
+              <button type="button" class="btn btn-secondary" onclick="clearAvatar()">Remove Avatar</button>
             </div>
           </div>
 

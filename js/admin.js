@@ -335,6 +335,12 @@ async function loadBannerTab() {
     bannerSha = null;
   }
   syncBannerUI();
+
+  const preview = document.getElementById('avatar-preview');
+  if (preview && bannerData.avatarSrc) {
+    preview.src = rawUrl(bannerData.avatarSrc);
+    preview.style.display = '';
+  }
 }
 
 function syncBannerUI() {
@@ -427,7 +433,7 @@ async function saveBanner() {
       const imgPath = `images/banners/banner.${bannerPendingExt}`;
       const imgSha = await gh.getSha(imgPath);
       await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha);
-      bannerData = { type: 'image', src: imgPath, height: h, posX: px, posY: py };
+      bannerData = { type: 'image', src: imgPath, height: h, posX: px, posY: py, avatarSrc: bannerData.avatarSrc || null };
       bannerPendingBase64 = null;
       bannerPendingExt = null;
     } else {
@@ -451,7 +457,7 @@ async function resetBanner() {
   if (!confirm('Reset banner to default gradient?')) return;
   bannerPendingBase64 = null;
   bannerPendingExt = null;
-  bannerData = { type: 'gradient', height: 160, posX: 50, posY: 50 };
+  bannerData = { type: 'gradient', height: 160, posX: 50, posY: 50, avatarSrc: bannerData.avatarSrc || null };
   try {
     const newSha = await gh.getSha('data/banner.json');
     await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Reset banner to gradient', newSha);
@@ -461,6 +467,96 @@ async function resetBanner() {
     syncBannerUI();
   } catch (err) {
     showMessage('banner-message', 'error', `Error: ${err.message}`);
+  }
+}
+
+// ---- Avatar ----
+
+let avatarPendingBase64 = null;
+let avatarPendingExt = null;
+
+function initAvatarDrop() {
+  const zone = document.getElementById('avatar-drop-zone');
+  if (!zone) return;
+
+  zone.addEventListener('click', () => {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'image/*';
+    inp.onchange = e => handleAvatarFile(e.target.files[0]);
+    inp.click();
+  });
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drop-active'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drop-active'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drop-active');
+    const file = e.dataTransfer.files[0];
+    if (file) handleAvatarFile(file);
+  });
+}
+
+function handleAvatarFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const ext = file.name.split('.').pop().toLowerCase() || 'png';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    avatarPendingBase64 = dataUrl.split(',')[1];
+    avatarPendingExt = ext;
+    const zone = document.getElementById('avatar-drop-zone');
+    if (zone) zone.textContent = `Ready: ${file.name}`;
+    const preview = document.getElementById('avatar-preview');
+    if (preview) { preview.src = dataUrl; preview.style.display = ''; }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveAvatar() {
+  if (!avatarPendingBase64) { showMessage('avatar-message', 'error', 'No image selected.'); return; }
+  const btn = document.getElementById('avatar-save-btn');
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
+  try {
+    const imgPath = `images/avatar.${avatarPendingExt}`;
+    const imgSha = await gh.getSha(imgPath);
+    await gh.putRaw(imgPath, avatarPendingBase64, 'Upload site avatar', imgSha);
+
+    bannerData = { ...bannerData, avatarSrc: imgPath };
+    const newSha = await gh.getSha('data/banner.json');
+    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update site avatar', newSha);
+
+    applyAvatar(rawUrl(imgPath));
+    avatarPendingBase64 = null;
+    avatarPendingExt = null;
+    showMessage('avatar-message', 'success', 'Avatar saved!');
+  } catch (err) {
+    showMessage('avatar-message', 'error', `Error: ${err.message}`);
+  } finally {
+    btn.textContent = 'Set Avatar';
+    btn.disabled = false;
+  }
+}
+
+async function clearAvatar() {
+  if (!confirm('Remove avatar and restore the D box?')) return;
+  try {
+    bannerData = { ...bannerData, avatarSrc: null };
+    const newSha = await gh.getSha('data/banner.json');
+    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Remove site avatar', newSha);
+
+    removeAvatar();
+    avatarPendingBase64 = null;
+    avatarPendingExt = null;
+    const zone = document.getElementById('avatar-drop-zone');
+    if (zone) zone.textContent = 'Drop image here or click to browse';
+    const preview = document.getElementById('avatar-preview');
+    if (preview) { preview.src = ''; preview.style.display = 'none'; }
+    showMessage('avatar-message', 'success', 'Avatar removed!');
+  } catch (err) {
+    showMessage('avatar-message', 'error', `Error: ${err.message}`);
   }
 }
 
@@ -483,6 +579,7 @@ function switchTab(name) {
   if (name === 'banner' && !bannerTabLoaded) {
     bannerTabLoaded = true;
     initBannerDrop();
+    initAvatarDrop();
     loadBannerTab();
   }
 }
