@@ -139,7 +139,7 @@ function initTheme() {
 }
 
 function startBannerCycle(intervalMs) {
-  if (!intervalMs) intervalMs = 8000;
+  if (typeof intervalMs !== 'number' || intervalMs < 1000) intervalMs = 10000;
   let idx = 0;
   const saved = localStorage.getItem('banner-id');
   if (saved) {

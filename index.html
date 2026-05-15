@@ -127,7 +127,7 @@
   <script>
     loadPostsGrid('posts-grid');
     loadWalletsPanel('wallets-list');
-    document.addEventListener('DOMContentLoaded', startBannerCycle);
+    document.addEventListener('DOMContentLoaded', function() { startBannerCycle(10000); });
   </script>
 </body>
 </html>
