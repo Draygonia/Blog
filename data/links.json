@@ -1,13 +1,6 @@
 {
   "links": [
     {
-
-      "title": "Dribbble",
-      "url": "https://dribbble.com",
-      "description": "Discover the world's top designers and creatives.",
-      "category": "Design"
-    },
-    {
       "title": "Refactoring UI",
       "url": "https://www.refactoringui.com",
       "description": "Make your apps look better without being a designer.",
