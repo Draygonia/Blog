@@ -191,19 +191,70 @@ function renderLinkList() {
   const listEl = document.getElementById('link-list');
   if (!linksData.links || linksData.links.length === 0) {
     listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">No links yet.</p>';
+  } else {
+    listEl.innerHTML = linksData.links.map((l, i) => `
+      <div class="admin-list-item">
+        <div class="admin-list-item-info">
+          <div class="admin-list-item-title">${escHtml(l.title)}</div>
+          <div class="admin-list-item-meta">${escHtml(l.url)}${l.category ? ` &middot; ${escHtml(l.category)}` : ''}</div>
+        </div>
+        <div class="admin-list-item-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  renderCategoryList();
+}
+
+function renderCategoryList() {
+  const listEl = document.getElementById('category-list');
+  if (!listEl) return;
+  const cats = linksData.categories || [];
+  if (cats.length === 0) {
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;margin-bottom:8px">No categories yet.</p>';
+  } else {
+    listEl.innerHTML = cats.map((c, i) => `
+      <div class="admin-list-item" style="margin-bottom:4px">
+        <div class="admin-list-item-info">
+          <div class="admin-list-item-title">${escHtml(c)}</div>
+        </div>
+        <div class="admin-list-item-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteCategory(${i})">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  populateCategoryDropdown();
+}
+
+function populateCategoryDropdown() {
+  const sel = document.getElementById('link-category');
+  if (!sel) return;
+  const cats = linksData.categories || [];
+  const current = sel.value;
+  sel.innerHTML = '<option value="">-- None --</option>' + cats.map(c => `<option value="${escHtml(c)}"${c === current ? ' selected' : ''}>${escHtml(c)}</option>`).join('');
+}
+
+async function addCategory() {
+  const input = document.getElementById('new-category');
+  if (!input) return;
+  const name = input.value.trim();
+  if (!name) return;
+  if (!linksData.categories) linksData.categories = [];
+  if (linksData.categories.includes(name)) {
+    showMessage('link-message', 'error', 'Category already exists.');
     return;
   }
-  listEl.innerHTML = linksData.links.map((l, i) => `
-    <div class="admin-list-item">
-      <div class="admin-list-item-info">
-        <div class="admin-list-item-title">${escHtml(l.title)}</div>
-        <div class="admin-list-item-meta">${escHtml(l.url)}${l.category ? ` &middot; ${escHtml(l.category)}` : ''}</div>
-      </div>
-      <div class="admin-list-item-actions">
-        <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
-      </div>
-    </div>
-  `).join('');
+  linksData.categories.push(name);
+  await saveLinks(null, null);
+  input.value = '';
+}
+
+async function deleteCategory(index) {
+  if (!confirm('Delete this category?')) return;
+  linksData.categories.splice(index, 1);
+  await saveLinks(null, null);
 }
 
 async function addLink() {

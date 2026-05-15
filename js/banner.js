@@ -32,6 +32,8 @@ function applyAvatar(src) {
     const letter = img.nextElementSibling;
     if (letter) letter.style.display = 'none';
   });
+  const aboutAvatar = document.getElementById('user-avatar');
+  if (aboutAvatar) aboutAvatar.src = src;
 }
 
 function removeAvatar() {
@@ -43,6 +45,8 @@ function removeAvatar() {
     const letter = img.nextElementSibling;
     if (letter) letter.style.display = '';
   });
+  const aboutAvatar = document.getElementById('user-avatar');
+  if (aboutAvatar) aboutAvatar.src = 'https://github.com/draygonia.png';
 }
 
 document.addEventListener('DOMContentLoaded', loadRepoBanner);

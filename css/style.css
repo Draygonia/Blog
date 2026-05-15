@@ -283,14 +283,15 @@ body.mobile-view #sidebar { width: 100%; }
   margin-bottom: 6px;
 }
 .theme-sub-label + * { margin-bottom: 10px; }
-.theme-swatches { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.theme-swatches { display: flex; gap: 6px; flex-wrap: nowrap; margin-bottom: 12px; }
 .swatch {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 3px;
   cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 0.15s, transform 0.1s;
+  flex-shrink: 0;
 }
 .swatch:hover { transform: scale(1.1); }
 .swatch.active { border-color: var(--text); }
