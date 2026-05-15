@@ -281,7 +281,8 @@ async function saveLinks(btnId, btnLabel) {
 
   try {
     const content = JSON.stringify(linksData, null, 2);
-    await gh.putFile('data/links.json', content, 'Update links', linksSha);
+    const freshSha = await gh.getSha('data/links.json');
+    await gh.putFile('data/links.json', content, 'Update links', freshSha);
     showMessage('link-message', 'success', 'Links updated!');
     if (btnId === 'add-link-btn') document.getElementById('link-form').reset();
     await loadLinks();
@@ -357,7 +358,8 @@ async function saveWallets(btnId, btnLabel) {
 
   try {
     const content = JSON.stringify(walletsData, null, 2);
-    await gh.putFile('data/wallets.json', content, 'Update wallets', walletsSha);
+    const freshSha = await gh.getSha('data/wallets.json');
+    await gh.putFile('data/wallets.json', content, 'Update wallets', freshSha);
     showMessage('wallet-message', 'success', 'Wallets updated!');
     if (btnId === 'add-wallet-btn') document.getElementById('wallet-form').reset();
     await loadWallets();
