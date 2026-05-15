@@ -12,6 +12,66 @@ function init() {
   } else {
     showAuth();
   }
+  initPostDrop();
+}
+
+// ---- Post image drop zone ----
+
+function initPostDrop() {
+  const zone = document.getElementById('post-img-drop-zone');
+  if (!zone) return;
+
+  zone.addEventListener('click', () => {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'image/*,video/*,.pdf,.zip,.txt,.md';
+    inp.onchange = e => handlePostFile(e.target.files[0]);
+    inp.click();
+  });
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drop-active'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drop-active'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drop-active');
+    if (e.dataTransfer.files[0]) handlePostFile(e.dataTransfer.files[0]);
+  });
+}
+
+async function handlePostFile(file) {
+  if (!file) return;
+  if (!token) { showMessage('post-img-message', 'error', 'Sign in first.'); return; }
+
+  const zone = document.getElementById('post-img-drop-zone');
+  const ext = file.name.split('.').pop().toLowerCase();
+  const safeName = slugify(file.name.replace(/\.[^.]+$/, '')) + '.' + ext;
+  const imgPath = `images/posts/${safeName}`;
+
+  zone.textContent = `Uploading ${file.name}…`;
+
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const base64 = ev.target.result.split(',')[1];
+    try {
+      const sha = await gh.getSha(imgPath);
+      await gh.putRaw(imgPath, base64, `Upload: ${safeName}`, sha);
+
+      const textarea = document.getElementById('post-content');
+      const isImage = file.type.startsWith('image/');
+      const md = isImage ? `\n![${file.name}](/images/posts/${safeName})\n` : `\n[${file.name}](/images/posts/${safeName})\n`;
+      const pos = textarea.selectionStart ?? textarea.value.length;
+      textarea.value = textarea.value.slice(0, pos) + md + textarea.value.slice(pos);
+      textarea.selectionStart = textarea.selectionEnd = pos + md.length;
+      textarea.focus();
+
+      zone.textContent = '📷 Drop image or file to attach';
+      showMessage('post-img-message', 'success', `Inserted: /images/posts/${safeName}`);
+    } catch (err) {
+      zone.textContent = '📷 Drop image or file to attach';
+      showMessage('post-img-message', 'error', `Upload failed: ${err.message}`);
+    }
+  };
+  reader.readAsDataURL(file);
 }
 
 function showAuth() {

@@ -609,6 +609,24 @@ body.mobile-view #sidebar { width: 100%; }
   accent-color: var(--accent);
 }
 
+/* ===== POST IMAGE DROP ===== */
+.post-img-drop-zone {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+  text-align: center;
+}
+.post-img-drop-zone:hover, .post-img-drop-zone.drop-active {
+  border-color: var(--accent);
+  background: rgba(255,255,255,.03);
+  color: var(--text);
+}
+
 /* ===== FOOTER ===== */
 footer { background: var(--footer-bg); border-top: 1px solid var(--border); color: var(--text-muted); font-size: 11px; text-align: center; padding: 14px; margin-top: 10px; transition: background 0.2s; }
 footer a { color: var(--text-muted); }
