@@ -1,6 +1,7 @@
 let token = sessionStorage.getItem('gh_token') || '';
 let gh = new GitHub(token);
 let postsData = [];
+let postsManifest = { posts: [] };
 let linksData = { links: [] };
 let linksSha = null;
 let editingPost = null;
@@ -21,7 +22,7 @@ function showAuth() {
 async function showAdmin() {
   document.getElementById('auth-section').style.display = 'none';
   document.getElementById('admin-content').style.display = '';
-  await Promise.all([loadPosts(), loadLinks(), loadWallets()]);
+  await Promise.all([loadPosts(), loadLinks(), loadWallets(), loadPostsManifest()]);
 }
 
 async function login() {
@@ -51,6 +52,22 @@ function logout() {
   gh = new GitHub('');
   sessionStorage.removeItem('gh_token');
   showAuth();
+}
+
+// ---- Posts manifest ----
+
+async function loadPostsManifest() {
+  try {
+    const { content } = await gh.getFile('data/posts.json');
+    postsManifest = JSON.parse(content);
+  } catch {
+    postsManifest = { posts: [] };
+  }
+}
+
+async function savePostsManifest(message) {
+  const freshSha = await gh.getSha('data/posts.json');
+  await gh.putFile('data/posts.json', JSON.stringify(postsManifest, null, 2), message, freshSha);
 }
 
 // ---- Posts ----
@@ -146,9 +163,14 @@ async function savePost() {
   btn.textContent = 'Saving...';
   btn.disabled = true;
 
+  const isNew = !editingPost;
   try {
     await gh.putFile(path, fileContent, message, editingPost?.sha);
-    showMessage('post-message', 'success', editingPost ? 'Post updated!' : 'Post published!');
+    if (isNew) {
+      postsManifest.posts = [filename, ...(postsManifest.posts || []).filter(f => f !== filename)];
+      await savePostsManifest(`Add post to index: ${title}`);
+    }
+    showMessage('post-message', 'success', isNew ? 'Post published!' : 'Post updated!');
     cancelEditPost();
     await loadPosts();
   } catch (err) {
@@ -164,6 +186,8 @@ async function confirmDeletePost(index) {
   if (!confirm(`Delete "${file.name}"? This cannot be undone.`)) return;
   try {
     await gh.deleteFile(`posts/${file.name}`, `Delete: ${file.name}`, file.sha);
+    postsManifest.posts = (postsManifest.posts || []).filter(f => f !== file.name);
+    await savePostsManifest(`Remove post from index: ${file.name}`);
     await loadPosts();
   } catch (err) {
     alert(`Error: ${err.message}`);

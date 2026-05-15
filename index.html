@@ -22,7 +22,6 @@
     <a href="index.html" class="admin-btn" style="border-color:var(--accent);color:var(--text)">POSTS</a>
     <a href="links.html" class="admin-btn">LINKS</a>
     <a href="admin.html" class="admin-btn">ADMIN</a>
-    <button class="admin-btn" onclick="shufflePosts()">&#8652; SHUFFLE</button>
     <button class="admin-btn" id="mobile-btn" onclick="toggleMobileView()">&#128241; MOBILE</button>
   </div>
 
@@ -128,16 +127,7 @@
   <script>
     loadPostsGrid('posts-grid');
     loadWalletsPanel('wallets-list');
-
-    function shufflePosts() {
-      const grid = document.getElementById('posts-grid');
-      const cards = Array.from(grid.querySelectorAll('.post-card'));
-      for (let i = cards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        grid.appendChild(cards[j]);
-        [cards[i], cards[j]] = [cards[j], cards[i]];
-      }
-    }
+    document.addEventListener('DOMContentLoaded', startBannerCycle);
   </script>
 </body>
 </html>

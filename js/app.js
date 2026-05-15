@@ -45,11 +45,11 @@ function rawUrl(path) {
 async function loadPostsGrid(containerId) {
   const el = document.getElementById(containerId);
   try {
-    const gh = new GitHub();
-    const files = await gh.listDir('posts');
-    const mdFiles = files
-      .filter(f => f.name.endsWith('.md'))
-      .sort((a, b) => b.name.localeCompare(a.name));
+    const res = await fetch(rawUrl('data/posts.json'));
+    if (!res.ok) throw new Error('posts.json not found');
+    const { posts } = await res.json();
+
+    const mdFiles = (posts || []).slice().sort((a, b) => b.localeCompare(a));
 
     if (mdFiles.length === 0) {
       el.innerHTML = `<div class="empty-state">
@@ -59,16 +59,16 @@ async function loadPostsGrid(containerId) {
       return;
     }
 
-    const posts = await Promise.all(mdFiles.map(async f => {
+    const postData = await Promise.all(mdFiles.map(async filename => {
       try {
-        const res = await fetch(rawUrl(`posts/${f.name}`));
-        const raw = await res.text();
+        const r = await fetch(rawUrl(`posts/${filename}`));
+        const raw = await r.text();
         const { data } = parseFrontmatter(raw);
-        return { ...data, filename: f.name };
+        return { ...data, filename };
       } catch { return null; }
     }));
 
-    el.innerHTML = posts.filter(Boolean).map(p => `
+    el.innerHTML = postData.filter(Boolean).map(p => `
       <article class="post-card" onclick="window.location='post.html?slug=${encodeURIComponent(p.filename)}'">
         <div class="post-card-date">${formatDate(p.date)}</div>
         <h2 class="post-card-title">${escHtml(p.title || 'Untitled')}</h2>

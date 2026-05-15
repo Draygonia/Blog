@@ -138,4 +138,18 @@ function initTheme() {
   }
 }
 
+function startBannerCycle(intervalMs) {
+  if (!intervalMs) intervalMs = 8000;
+  let idx = 0;
+  const saved = localStorage.getItem('banner-id');
+  if (saved) {
+    const found = BANNERS.findIndex(b => b.id === saved);
+    if (found !== -1) idx = found;
+  }
+  setInterval(function() {
+    idx = (idx + 1) % BANNERS.length;
+    applyBanner(BANNERS[idx].id, BANNERS[idx].css);
+  }, intervalMs);
+}
+
 document.addEventListener('DOMContentLoaded', initTheme);
