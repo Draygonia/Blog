@@ -19,8 +19,9 @@
   </div>
 
   <div id="admin-bar">
-    <a href="admin.html" class="admin-btn">+ ADD</a>
-    <a href="admin.html" class="admin-btn" id="manage-btn">MANAGE</a>
+    <a href="index.html" class="admin-btn" style="border-color:var(--accent);color:var(--text)">POSTS</a>
+    <a href="links.html" class="admin-btn">LINKS</a>
+    <a href="admin.html" class="admin-btn">ADMIN</a>
     <button class="admin-btn" onclick="shufflePosts()">&#8652; SHUFFLE</button>
     <button class="admin-btn" id="mobile-btn" onclick="toggleMobileView()">&#128241; MOBILE</button>
   </div>
@@ -35,6 +36,22 @@
   <div id="page-wrapper">
 
     <div id="main-content">
+      <div class="panel" style="margin-bottom:12px">
+        <div class="panel-header">
+          <div class="panel-accent"></div>
+          <span class="panel-title">Compose New Post</span>
+        </div>
+        <div class="panel-body" style="padding:8px">
+          <a href="admin.html" class="compose-area">
+            <div class="compose-placeholder">DROP A<br>LINK,<br>IMAGE,<br>VIDEO,<br>OR<br>FILE &mdash;<br>OR PASTE<br>A URL<br>BELOW</div>
+            <div class="compose-links">
+              <a href="admin.html">markdown</a><br>
+              <a href="admin.html">images</a><br>
+              <a href="admin.html">links</a>
+            </div>
+          </a>
+        </div>
+      </div>
       <div id="posts-grid">
         <div class="loading"><div class="spinner"></div> Loading posts&hellip;</div>
       </div>
@@ -71,7 +88,6 @@
           </div>
         </div>
         <div class="panel-body">
-          <div class="theme-sub-label">Color</div>
           <div class="theme-swatches">
             <div class="swatch active" style="background:#e07a10" data-theme="orange" onclick="applyTheme('orange')" title="Orange"></div>
             <div class="swatch" style="background:#cc3020" data-theme="red" onclick="applyTheme('red')" title="Red"></div>
@@ -79,10 +95,6 @@
             <div class="swatch" style="background:#c0ccd8" data-theme="silver" onclick="applyTheme('silver')" title="Silver"></div>
             <div class="swatch" style="background:#1a1a2a" data-theme="dark" onclick="applyTheme('dark')" title="Dark"></div>
             <div class="swatch" style="background:#8a30c8" data-theme="purple" onclick="applyTheme('purple')" title="Purple"></div>
-          </div>
-          <div class="theme-sub-label">Banner</div>
-          <div class="banner-options" id="banner-options">
-            <!-- populated by theme.js -->
           </div>
         </div>
       </div>
@@ -97,26 +109,6 @@
         </div>
         <div class="panel-body" style="padding:8px">
           <div id="wallets-list"></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-accent"></div>
-          <span class="panel-title">Compose New Post</span>
-          <div class="panel-actions">
-            <span class="panel-action" title="Collapse">&#9660;</span>
-          </div>
-        </div>
-        <div class="panel-body" style="padding:8px">
-          <a href="admin.html" class="compose-area">
-            <div class="compose-placeholder">DROP A<br>LINK,<br>IMAGE,<br>VIDEO,<br>OR<br>FILE &mdash;<br>OR PASTE<br>A URL<br>BELOW</div>
-            <div class="compose-links">
-              <a href="admin.html">markdown</a><br>
-              <a href="admin.html">images</a><br>
-              <a href="admin.html">links</a>
-            </div>
-          </a>
         </div>
       </div>
 
@@ -136,25 +128,6 @@
   <script>
     loadPostsGrid('posts-grid');
     loadWalletsPanel('wallets-list');
-
-    // Populate banner options from BANNERS array
-    document.addEventListener('DOMContentLoaded', function() {
-      const container = document.getElementById('banner-options');
-      BANNERS.forEach(function(b) {
-        const el = document.createElement('div');
-        el.className = 'banner-opt';
-        el.dataset.banner = b.id;
-        el.style.background = b.preview;
-        el.title = b.label;
-        el.onclick = function() { applyBanner(b.id, b.css); };
-        container.appendChild(el);
-      });
-      const customBtn = document.createElement('button');
-      customBtn.className = 'banner-custom-btn';
-      customBtn.textContent = '+ URL';
-      customBtn.onclick = promptCustomBanner;
-      container.appendChild(customBtn);
-    });
 
     function shufflePosts() {
       const grid = document.getElementById('posts-grid');

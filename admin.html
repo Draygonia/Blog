@@ -19,7 +19,7 @@
   </div>
 
   <div id="admin-bar">
-    <a href="index.html" class="admin-btn">&#8592; BACK</a>
+    <a href="index.html" class="admin-btn">POSTS</a>
     <a href="links.html" class="admin-btn">LINKS</a>
     <a href="admin.html" class="admin-btn" style="border-color:var(--accent);color:var(--text)">ADMIN</a>
     <button class="admin-btn" id="mobile-btn" onclick="toggleMobileView()">&#128241; MOBILE</button>
@@ -103,6 +103,13 @@
           </div>
 
           <div class="tab-panel" id="tab-links">
+            <p class="section-label">Link Categories</p>
+            <div id="category-list"></div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px">
+              <input type="text" id="new-category" placeholder="New category name&hellip;" style="flex:1;padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;font-family:var(--font);outline:none" onkeydown="if(event.key==='Enter')addCategory()">
+              <button class="btn btn-secondary btn-sm" onclick="addCategory()">+ Add</button>
+            </div>
+            <hr class="divider">
             <p class="section-label">Existing Links</p>
             <div id="link-list"></div>
             <hr class="divider">
@@ -116,7 +123,9 @@
                 </div>
                 <div class="form-group">
                   <label>Category</label>
-                  <input type="text" id="link-category" placeholder="Crypto" />
+                  <select id="link-category">
+                    <option value="">-- None --</option>
+                  </select>
                 </div>
               </div>
               <div class="form-group">
