@@ -12,5 +12,8 @@
       "description": "What's trending in type. Font recommendations and type inspiration.",
       "category": "Design"
     }
+  ],
+  "categories": [
+    "Test"
   ]
 }
