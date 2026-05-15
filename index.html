@@ -22,7 +22,6 @@
     <a href="index.html" class="admin-btn" style="border-color:var(--accent);color:var(--text)">POSTS</a>
     <a href="links.html" class="admin-btn">LINKS</a>
     <a href="admin.html" class="admin-btn">ADMIN</a>
-    <button class="admin-btn" onclick="shufflePosts()">&#8652; SHUFFLE</button>
     <button class="admin-btn" id="mobile-btn" onclick="toggleMobileView()">&#128241; MOBILE</button>
   </div>
 
@@ -36,22 +35,6 @@
   <div id="page-wrapper">
 
     <div id="main-content">
-      <div class="panel" style="margin-bottom:12px">
-        <div class="panel-header">
-          <div class="panel-accent"></div>
-          <span class="panel-title">Compose New Post</span>
-        </div>
-        <div class="panel-body" style="padding:8px">
-          <a href="admin.html" class="compose-area">
-            <div class="compose-placeholder">DROP A<br>LINK,<br>IMAGE,<br>VIDEO,<br>OR<br>FILE &mdash;<br>OR PASTE<br>A URL<br>BELOW</div>
-            <div class="compose-links">
-              <a href="admin.html">markdown</a><br>
-              <a href="admin.html">images</a><br>
-              <a href="admin.html">links</a>
-            </div>
-          </a>
-        </div>
-      </div>
       <div id="posts-grid">
         <div class="loading"><div class="spinner"></div> Loading posts&hellip;</div>
       </div>
@@ -128,16 +111,7 @@
   <script>
     loadPostsGrid('posts-grid');
     loadWalletsPanel('wallets-list');
-
-    function shufflePosts() {
-      const grid = document.getElementById('posts-grid');
-      const cards = Array.from(grid.querySelectorAll('.post-card'));
-      for (let i = cards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        grid.appendChild(cards[j]);
-        [cards[i], cards[j]] = [cards[j], cards[i]];
-      }
-    }
+    document.addEventListener('DOMContentLoaded', function() { startBannerCycle(10000); });
   </script>
 </body>
 </html>
