@@ -40,7 +40,7 @@ async function loadWalletsPanel(containerId) {
   el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading&hellip;</div>';
 
   try {
-    const res = await fetch(rawUrl('data/wallets.json'));
+    const res = await fetch('/data/wallets.json');
     if (!res.ok) throw new Error('not found');
     const { wallets } = await res.json();
 
