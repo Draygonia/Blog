@@ -665,4 +665,5 @@ footer a:hover { color: var(--text); }
   #page-wrapper { flex-direction: column; padding: 10px; }
   #sidebar { width: 100%; }
   #site-search { max-width: 140px; }
+  #site-banner { max-height: 40vw; }
 }
