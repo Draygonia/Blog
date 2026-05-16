@@ -467,6 +467,7 @@ let bannerData = { type: 'gradient', height: 160, posX: 50, posY: 50 };
 let bannerSha = null;
 let bannerPendingBase64 = null;
 let bannerPendingExt = null;
+let bannerSelectedPath = null;
 
 async function loadBannerTab() {
   try {
@@ -483,6 +484,61 @@ async function loadBannerTab() {
   if (preview && bannerData.avatarSrc) {
     preview.src = '/' + bannerData.avatarSrc;
     preview.style.display = '';
+  }
+
+  await loadBannerGallery();
+}
+
+async function loadBannerGallery() {
+  const el = document.getElementById('banner-gallery');
+  if (!el) return;
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading&hellip;</div>';
+  try {
+    const files = await gh.listDir('images/banners');
+    const banners = files.filter(f => f.type === 'file' && f.name !== '.gitkeep');
+    if (banners.length === 0) {
+      el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;margin-bottom:8px">No banners uploaded yet.</p>';
+      return;
+    }
+    const activeSrc = bannerData.src || '';
+    el.innerHTML = `<div class="banner-gallery-grid">${banners.map(b => `
+      <div class="banner-thumb${b.path === activeSrc || b.path === bannerSelectedPath ? ' banner-thumb-active' : ''}" onclick="selectBannerFromGallery('${escHtml(b.path)}')">
+        <div class="banner-thumb-img"><img src="/${escHtml(b.path)}" alt="${escHtml(b.name)}"></div>
+        <div class="banner-thumb-name">${escHtml(b.name)}</div>
+        <div class="banner-thumb-actions">
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteBannerFile('${escHtml(b.path)}','${escHtml(b.sha)}')" title="Delete">&#x2715; Delete</button>
+        </div>
+      </div>`).join('')}</div>`;
+  } catch (err) {
+    el.innerHTML = `<p style="color:var(--text-muted);font-size:.875rem">Error: ${escHtml(err.message)}</p>`;
+  }
+}
+
+function selectBannerFromGallery(path) {
+  bannerSelectedPath = path;
+  bannerPendingBase64 = null;
+  bannerPendingExt = null;
+  const zone = document.getElementById('banner-drop-zone');
+  if (zone) zone.textContent = `Selected: ${path.split('/').pop()} — click "Set as Banner" to apply`;
+  updateBannerPreview();
+  loadBannerGallery();
+}
+
+async function deleteBannerFile(path, sha) {
+  if (!confirm('Delete this banner image? This cannot be undone.')) return;
+  try {
+    await gh.deleteFile(path, `Delete banner: ${path.split('/').pop()}`, sha);
+    if (bannerSelectedPath === path) { bannerSelectedPath = null; }
+    if (bannerData.src === path) {
+      bannerData = { ...bannerData, type: 'gradient', src: null };
+      const newSha = await gh.getSha('data/banner.json');
+      await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Remove deleted banner from config', newSha);
+      syncBannerUI();
+    }
+    showMessage('banner-message', 'success', 'Banner deleted.');
+    await loadBannerGallery();
+  } catch (err) {
+    showMessage('banner-message', 'error', `Error deleting: ${err.message}`);
   }
 }
 
@@ -506,14 +562,16 @@ function updateBannerPreview() {
   const px = parseInt(document.getElementById('banner-pos-x')?.value ?? bannerData.posX ?? 50);
   const py = parseInt(document.getElementById('banner-pos-y')?.value ?? bannerData.posY ?? 50);
   preview.style.height = h + 'px';
+  let imgSrc = null;
   if (bannerPendingBase64) {
-    preview.style.backgroundImage = `url(data:image/${bannerPendingExt};base64,${bannerPendingBase64})`;
-    preview.style.backgroundSize = 'cover';
-    preview.style.backgroundPosition = `${px}% ${py}%`;
-    preview.style.backgroundRepeat = 'no-repeat';
+    imgSrc = `data:image/${bannerPendingExt};base64,${bannerPendingBase64}`;
+  } else if (bannerSelectedPath) {
+    imgSrc = '/' + bannerSelectedPath;
   } else if (bannerData.type === 'image' && bannerData.src) {
-    const url = '/' + bannerData.src;
-    preview.style.backgroundImage = `url(${JSON.stringify(url)})`;
+    imgSrc = '/' + bannerData.src;
+  }
+  if (imgSrc) {
+    preview.style.backgroundImage = `url(${JSON.stringify(imgSrc)})`;
     preview.style.backgroundSize = 'cover';
     preview.style.backgroundPosition = `${px}% ${py}%`;
     preview.style.backgroundRepeat = 'no-repeat';
@@ -573,21 +631,28 @@ async function saveBanner() {
     const py = parseInt(document.getElementById('banner-pos-y').value);
 
     if (bannerPendingBase64) {
-      const imgPath = `images/banners/banner.${bannerPendingExt}`;
+      const imgPath = `images/banners/banner-${Date.now()}.${bannerPendingExt}`;
       const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
       await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha).catch(e => { throw new Error(`upload image: ${e.message}`); });
       bannerData = { type: 'image', src: imgPath, height: h, posX: px, posY: py, avatarSrc: bannerData.avatarSrc || null };
       bannerPendingBase64 = null;
       bannerPendingExt = null;
+      const zone = document.getElementById('banner-drop-zone');
+      if (zone) zone.textContent = 'Drop image here or click to browse';
+    } else if (bannerSelectedPath) {
+      bannerData = { type: 'image', src: bannerSelectedPath, height: h, posX: px, posY: py, avatarSrc: bannerData.avatarSrc || null };
+      bannerSelectedPath = null;
+      const zone = document.getElementById('banner-drop-zone');
+      if (zone) zone.textContent = 'Drop image here or click to browse';
     } else {
       bannerData = { ...bannerData, height: h, posX: px, posY: py };
     }
 
     const newSha = await gh.getSha('data/banner.json').catch(e => { throw new Error(`getSha(banner.json): ${e.message}`); });
     await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update banner config', newSha).catch(e => { throw new Error(`save config: ${e.message}`); });
-    bannerSha = newSha;
     showMessage('banner-message', 'success', 'Banner saved!');
     syncBannerUI();
+    await loadBannerGallery();
   } catch (err) {
     showMessage('banner-message', 'error', `Error: ${err.message}`);
   } finally {
@@ -600,6 +665,7 @@ async function resetBanner() {
   if (!confirm('Reset banner to default gradient?')) return;
   bannerPendingBase64 = null;
   bannerPendingExt = null;
+  bannerSelectedPath = null;
   bannerData = { type: 'gradient', height: 160, posX: 50, posY: 50, avatarSrc: bannerData.avatarSrc || null };
   try {
     const newSha = await gh.getSha('data/banner.json');

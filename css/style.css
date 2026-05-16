@@ -609,6 +609,34 @@ body.mobile-view #sidebar { width: 100%; }
   accent-color: var(--accent);
 }
 
+/* ===== BANNER GALLERY ===== */
+.banner-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.banner-thumb {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.banner-thumb:hover { border-color: var(--accent); }
+.banner-thumb-active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.banner-thumb-img { height: 72px; background: var(--surface); overflow: hidden; }
+.banner-thumb-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.banner-thumb-name {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 3px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.banner-thumb-actions { padding: 4px 6px; }
+
 /* ===== POST IMAGE DROP ===== */
 .post-img-drop-zone {
   border: 1px dashed var(--border);
