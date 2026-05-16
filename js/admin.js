@@ -468,6 +468,16 @@ let bannerSha = null;
 let bannerPendingBase64 = null;
 let bannerPendingExt = null;
 let bannerSelectedPath = null;
+const bannerGalleryUrls = {}; // path → GitHub download_url for private-repo thumbnails
+
+async function fetchBannerConfig() {
+  try {
+    const { content, sha } = await gh.getFile('data/banner.json');
+    return { config: JSON.parse(content), sha };
+  } catch {
+    return { config: { ...bannerData }, sha: null };
+  }
+}
 
 async function loadBannerTab() {
   try {
@@ -496,6 +506,7 @@ async function loadBannerGallery() {
   try {
     const files = await gh.listDir('images/banners');
     const banners = files.filter(f => f.type === 'file' && f.name !== '.gitkeep');
+    banners.forEach(b => { if (b.download_url) bannerGalleryUrls[b.path] = b.download_url; });
     if (banners.length === 0) {
       el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;margin-bottom:8px">No banners uploaded yet.</p>';
       return;
@@ -503,7 +514,7 @@ async function loadBannerGallery() {
     const activeSrc = bannerData.src || '';
     el.innerHTML = `<div class="banner-gallery-grid">${banners.map(b => `
       <div class="banner-thumb${b.path === activeSrc || b.path === bannerSelectedPath ? ' banner-thumb-active' : ''}" onclick="selectBannerFromGallery('${escHtml(b.path)}')">
-        <div class="banner-thumb-img"><img src="/${escHtml(b.path)}" alt="${escHtml(b.name)}"></div>
+        <div class="banner-thumb-img"><img src="${escHtml(b.download_url || '/' + b.path)}" alt="${escHtml(b.name)}"></div>
         <div class="banner-thumb-name">${escHtml(b.name)}</div>
         <div class="banner-thumb-actions">
           <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteBannerFile('${escHtml(b.path)}','${escHtml(b.sha)}')" title="Delete">&#x2715; Delete</button>
@@ -530,9 +541,10 @@ async function deleteBannerFile(path, sha) {
     await gh.deleteFile(path, `Delete banner: ${path.split('/').pop()}`, sha);
     if (bannerSelectedPath === path) { bannerSelectedPath = null; }
     if (bannerData.src === path) {
-      bannerData = { ...bannerData, type: 'gradient', src: null };
-      const newSha = await gh.getSha('data/banner.json');
-      await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Remove deleted banner from config', newSha);
+      const { config: fresh, sha: freshSha } = await fetchBannerConfig();
+      const updated = { ...fresh, type: 'gradient', src: null };
+      await gh.putFile('data/banner.json', JSON.stringify(updated, null, 2), 'Remove deleted banner from config', freshSha);
+      bannerData = updated;
       syncBannerUI();
     }
     showMessage('banner-message', 'success', 'Banner deleted.');
@@ -566,9 +578,9 @@ function updateBannerPreview() {
   if (bannerPendingBase64) {
     imgSrc = `data:image/${bannerPendingExt};base64,${bannerPendingBase64}`;
   } else if (bannerSelectedPath) {
-    imgSrc = '/' + bannerSelectedPath;
+    imgSrc = bannerGalleryUrls[bannerSelectedPath] || '/' + bannerSelectedPath;
   } else if (bannerData.type === 'image' && bannerData.src) {
-    imgSrc = '/' + bannerData.src;
+    imgSrc = bannerGalleryUrls[bannerData.src] || '/' + bannerData.src;
   }
   if (imgSrc) {
     preview.style.backgroundImage = `url(${JSON.stringify(imgSrc)})`;
@@ -630,26 +642,29 @@ async function saveBanner() {
     const px = parseInt(document.getElementById('banner-pos-x').value);
     const py = parseInt(document.getElementById('banner-pos-y').value);
 
+    const { config: fresh, sha: freshSha } = await fetchBannerConfig();
+    let updated;
+
     if (bannerPendingBase64) {
       const imgPath = `images/banners/banner-${Date.now()}.${bannerPendingExt}`;
       const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
       await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha).catch(e => { throw new Error(`upload image: ${e.message}`); });
-      bannerData = { type: 'image', src: imgPath, height: h, posX: px, posY: py, avatarSrc: bannerData.avatarSrc || null };
+      updated = { ...fresh, type: 'image', src: imgPath, height: h, posX: px, posY: py };
       bannerPendingBase64 = null;
       bannerPendingExt = null;
       const zone = document.getElementById('banner-drop-zone');
       if (zone) zone.textContent = 'Drop image here or click to browse';
     } else if (bannerSelectedPath) {
-      bannerData = { type: 'image', src: bannerSelectedPath, height: h, posX: px, posY: py, avatarSrc: bannerData.avatarSrc || null };
+      updated = { ...fresh, type: 'image', src: bannerSelectedPath, height: h, posX: px, posY: py };
       bannerSelectedPath = null;
       const zone = document.getElementById('banner-drop-zone');
       if (zone) zone.textContent = 'Drop image here or click to browse';
     } else {
-      bannerData = { ...bannerData, height: h, posX: px, posY: py };
+      updated = { ...fresh, height: h, posX: px, posY: py };
     }
 
-    const newSha = await gh.getSha('data/banner.json').catch(e => { throw new Error(`getSha(banner.json): ${e.message}`); });
-    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update banner config', newSha).catch(e => { throw new Error(`save config: ${e.message}`); });
+    await gh.putFile('data/banner.json', JSON.stringify(updated, null, 2), 'Update banner config', freshSha).catch(e => { throw new Error(`save config: ${e.message}`); });
+    bannerData = updated;
     showMessage('banner-message', 'success', 'Banner saved!');
     syncBannerUI();
     await loadBannerGallery();
@@ -666,10 +681,11 @@ async function resetBanner() {
   bannerPendingBase64 = null;
   bannerPendingExt = null;
   bannerSelectedPath = null;
-  bannerData = { type: 'gradient', height: 160, posX: 50, posY: 50, avatarSrc: bannerData.avatarSrc || null };
   try {
-    const newSha = await gh.getSha('data/banner.json');
-    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Reset banner to gradient', newSha);
+    const { config: fresh, sha: freshSha } = await fetchBannerConfig();
+    const updated = { ...fresh, type: 'gradient', src: null };
+    await gh.putFile('data/banner.json', JSON.stringify(updated, null, 2), 'Reset banner to gradient', freshSha);
+    bannerData = updated;
     showMessage('banner-message', 'success', 'Banner reset!');
     const zone = document.getElementById('banner-drop-zone');
     if (zone) zone.textContent = 'Drop image here or click to browse';
@@ -733,9 +749,10 @@ async function saveAvatar() {
     const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
     await gh.putRaw(imgPath, avatarPendingBase64, 'Upload site avatar', imgSha).catch(e => { throw new Error(`upload avatar: ${e.message}`); });
 
-    bannerData = { ...bannerData, avatarSrc: imgPath };
-    const newSha = await gh.getSha('data/banner.json').catch(e => { throw new Error(`getSha(banner.json): ${e.message}`); });
-    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update site avatar', newSha).catch(e => { throw new Error(`save config: ${e.message}`); });
+    const { config: fresh, sha: freshSha } = await fetchBannerConfig();
+    const updated = { ...fresh, avatarSrc: imgPath };
+    await gh.putFile('data/banner.json', JSON.stringify(updated, null, 2), 'Update site avatar', freshSha).catch(e => { throw new Error(`save config: ${e.message}`); });
+    bannerData = updated;
 
     applyAvatar('/' + imgPath);
     avatarPendingBase64 = null;
@@ -752,9 +769,10 @@ async function saveAvatar() {
 async function clearAvatar() {
   if (!confirm('Remove avatar and restore the D box?')) return;
   try {
-    bannerData = { ...bannerData, avatarSrc: null };
-    const newSha = await gh.getSha('data/banner.json');
-    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Remove site avatar', newSha);
+    const { config: fresh, sha: freshSha } = await fetchBannerConfig();
+    const updated = { ...fresh, avatarSrc: null };
+    await gh.putFile('data/banner.json', JSON.stringify(updated, null, 2), 'Remove site avatar', freshSha);
+    bannerData = updated;
 
     removeAvatar();
     avatarPendingBase64 = null;
