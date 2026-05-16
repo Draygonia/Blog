@@ -14,7 +14,7 @@ class GitHub {
     const { owner, repo, branch } = CONFIG;
     const res = await fetch(
       `${this.base}/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
-      { headers: this.headers }
+      { headers: this.headers, cache: 'no-store' }
     );
     if (res.status === 404) return [];
     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
@@ -25,7 +25,7 @@ class GitHub {
     const { owner, repo, branch } = CONFIG;
     const res = await fetch(
       `${this.base}/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
-      { headers: this.headers }
+      { headers: this.headers, cache: 'no-store' }
     );
     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
     const data = await res.json();
@@ -56,7 +56,7 @@ class GitHub {
     const { owner, repo, branch } = CONFIG;
     const res = await fetch(
       `${this.base}/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
-      { headers: this.headers }
+      { headers: this.headers, cache: 'no-store' }
     );
     if (res.status === 404) return null;
     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
