@@ -1,8 +1,8 @@
 {
   "type": "image",
-  "src": "images/banners/banner-1778942705354.jpg",
+  "src": "images/banners/banner.jpg",
   "height": 160,
   "posX": 26,
-  "posY": 100,
+  "posY": 22,
   "avatarSrc": "images/avatar.jpg"
 }
