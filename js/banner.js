@@ -1,11 +1,29 @@
 async function loadRepoBanner() {
   try {
     const res = await fetch('/data/banner.json');
-    if (!res.ok) return;
+    if (!res.ok) {
+      startBannerCycle(10000);
+      return;
+    }
     const cfg = await res.json();
-    applyBannerConfig(cfg);
+
     if (cfg.avatarSrc) applyAvatar('/' + cfg.avatarSrc);
-  } catch {}
+
+    const banners = Array.isArray(cfg.banners) && cfg.banners.length > 0
+      ? cfg.banners
+      : (cfg.type === 'image' && cfg.src ? [cfg.src] : []);
+
+    if (banners.length > 0) {
+      const prev = parseInt(localStorage.getItem('banner-img-idx') || '-1');
+      const idx = (prev + 1) % banners.length;
+      localStorage.setItem('banner-img-idx', String(idx));
+      applyBannerConfig({ ...cfg, type: 'image', src: banners[idx] });
+    } else {
+      startBannerCycle(10000);
+    }
+  } catch {
+    startBannerCycle(10000);
+  }
 }
 
 function applyBannerConfig(cfg) {
