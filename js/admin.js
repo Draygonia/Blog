@@ -540,9 +540,16 @@ async function deleteBannerFile(path, sha) {
   try {
     await gh.deleteFile(path, `Delete banner: ${path.split('/').pop()}`, sha);
     if (bannerSelectedPath === path) { bannerSelectedPath = null; }
-    if (bannerData.src === path) {
+    {
       const { config: fresh, sha: freshSha } = await fetchBannerConfig();
-      const updated = { ...fresh, type: 'gradient', src: null };
+      const remaining = (Array.isArray(fresh.banners) ? fresh.banners : (fresh.src ? [fresh.src] : []))
+        .filter(p => p !== path);
+      let updated;
+      if (remaining.length > 0) {
+        updated = { ...fresh, type: 'image', src: remaining[0], banners: remaining };
+      } else {
+        updated = { ...fresh, type: 'gradient', src: null, banners: [] };
+      }
       await gh.putFile('data/banner.json', JSON.stringify(updated, null, 2), 'Remove deleted banner from config', freshSha);
       bannerData = updated;
       syncBannerUI();
@@ -645,17 +652,22 @@ async function saveBanner() {
     const { config: fresh, sha: freshSha } = await fetchBannerConfig();
     let updated;
 
+    const existingBanners = Array.isArray(fresh.banners) ? [...fresh.banners]
+      : (fresh.src ? [fresh.src] : []);
+
     if (bannerPendingBase64) {
       const imgPath = `images/banners/banner-${Date.now()}.${bannerPendingExt}`;
       const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
       await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha).catch(e => { throw new Error(`upload image: ${e.message}`); });
-      updated = { ...fresh, type: 'image', src: imgPath, height: h, posX: px, posY: py };
+      if (!existingBanners.includes(imgPath)) existingBanners.push(imgPath);
+      updated = { ...fresh, type: 'image', src: imgPath, height: h, posX: px, posY: py, banners: existingBanners };
       bannerPendingBase64 = null;
       bannerPendingExt = null;
       const zone = document.getElementById('banner-drop-zone');
       if (zone) zone.textContent = 'Drop image here or click to browse';
     } else if (bannerSelectedPath) {
-      updated = { ...fresh, type: 'image', src: bannerSelectedPath, height: h, posX: px, posY: py };
+      if (!existingBanners.includes(bannerSelectedPath)) existingBanners.push(bannerSelectedPath);
+      updated = { ...fresh, type: 'image', src: bannerSelectedPath, height: h, posX: px, posY: py, banners: existingBanners };
       bannerSelectedPath = null;
       const zone = document.getElementById('banner-drop-zone');
       if (zone) zone.textContent = 'Drop image here or click to browse';
