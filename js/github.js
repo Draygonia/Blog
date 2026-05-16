@@ -47,7 +47,7 @@ class GitHub {
     );
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `${res.status} ${res.statusText}`);
+      throw new Error(`${res.status}: ${err.message || res.statusText}`);
     }
     return res.json();
   }
@@ -78,7 +78,7 @@ class GitHub {
     );
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `${res.status} ${res.statusText}`);
+      throw new Error(`${res.status}: ${err.message || res.statusText}`);
     }
     return res.json();
   }

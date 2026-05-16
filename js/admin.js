@@ -94,15 +94,21 @@ async function login() {
     const res = await fetch('https://api.github.com/user', {
       headers: { Authorization: `token ${t}` },
     });
-    if (!res.ok) throw new Error('Invalid token');
+    if (!res.ok) throw new Error('Invalid token — check your token and try again.');
+
+    const { owner, repo } = CONFIG;
+    const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: { Authorization: `token ${t}` },
+    });
+    if (!repoRes.ok) throw new Error(`Token can't access ${owner}/${repo}. Make sure it has "repo" scope (not just "public_repo").`);
 
     token = t;
     gh = new GitHub(token);
     sessionStorage.setItem('gh_token', token);
     errEl.style.display = 'none';
     showAdmin();
-  } catch {
-    errEl.textContent = 'Could not authenticate. Check your token and try again.';
+  } catch (err) {
+    errEl.textContent = err.message;
     errEl.style.display = '';
   }
 }
@@ -568,8 +574,8 @@ async function saveBanner() {
 
     if (bannerPendingBase64) {
       const imgPath = `images/banners/banner.${bannerPendingExt}`;
-      const imgSha = await gh.getSha(imgPath);
-      await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha);
+      const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
+      await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha).catch(e => { throw new Error(`upload image: ${e.message}`); });
       bannerData = { type: 'image', src: imgPath, height: h, posX: px, posY: py, avatarSrc: bannerData.avatarSrc || null };
       bannerPendingBase64 = null;
       bannerPendingExt = null;
@@ -577,8 +583,8 @@ async function saveBanner() {
       bannerData = { ...bannerData, height: h, posX: px, posY: py };
     }
 
-    const newSha = await gh.getSha('data/banner.json');
-    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update banner config', newSha);
+    const newSha = await gh.getSha('data/banner.json').catch(e => { throw new Error(`getSha(banner.json): ${e.message}`); });
+    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update banner config', newSha).catch(e => { throw new Error(`save config: ${e.message}`); });
     bannerSha = newSha;
     showMessage('banner-message', 'success', 'Banner saved!');
     syncBannerUI();
@@ -658,12 +664,12 @@ async function saveAvatar() {
 
   try {
     const imgPath = `images/avatar.${avatarPendingExt}`;
-    const imgSha = await gh.getSha(imgPath);
-    await gh.putRaw(imgPath, avatarPendingBase64, 'Upload site avatar', imgSha);
+    const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
+    await gh.putRaw(imgPath, avatarPendingBase64, 'Upload site avatar', imgSha).catch(e => { throw new Error(`upload avatar: ${e.message}`); });
 
     bannerData = { ...bannerData, avatarSrc: imgPath };
-    const newSha = await gh.getSha('data/banner.json');
-    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update site avatar', newSha);
+    const newSha = await gh.getSha('data/banner.json').catch(e => { throw new Error(`getSha(banner.json): ${e.message}`); });
+    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update site avatar', newSha).catch(e => { throw new Error(`save config: ${e.message}`); });
 
     applyAvatar('/' + imgPath);
     avatarPendingBase64 = null;
