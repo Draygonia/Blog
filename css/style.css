@@ -121,6 +121,20 @@ a:hover { color: var(--link-hover); }
   gap: 4px;
 }
 .admin-btn:hover { border-color: var(--accent); color: var(--text); text-decoration: none; }
+.admin-btn-active { border-color: var(--accent) !important; color: var(--text) !important; }
+
+/* ===== LINKS CATEGORIES ===== */
+.links-category { margin-bottom: 20px; }
+.links-category-header {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 8px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+}
 
 /* ===== BANNER ===== */
 #site-banner {
@@ -383,7 +397,7 @@ body.mobile-view #sidebar { width: 100%; }
 }
 
 /* ===== LINK CARDS ===== */
-.links-grid { display: block; }
+.links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin-bottom: 8px; }
 .link-card {
   background: var(--surface);
   border: 1px solid var(--border);
