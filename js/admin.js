@@ -568,8 +568,8 @@ async function saveBanner() {
 
     if (bannerPendingBase64) {
       const imgPath = `images/banners/banner.${bannerPendingExt}`;
-      const imgSha = await gh.getSha(imgPath);
-      await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha);
+      const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
+      await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha).catch(e => { throw new Error(`upload image: ${e.message}`); });
       bannerData = { type: 'image', src: imgPath, height: h, posX: px, posY: py, avatarSrc: bannerData.avatarSrc || null };
       bannerPendingBase64 = null;
       bannerPendingExt = null;
@@ -577,8 +577,8 @@ async function saveBanner() {
       bannerData = { ...bannerData, height: h, posX: px, posY: py };
     }
 
-    const newSha = await gh.getSha('data/banner.json');
-    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update banner config', newSha);
+    const newSha = await gh.getSha('data/banner.json').catch(e => { throw new Error(`getSha(banner.json): ${e.message}`); });
+    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update banner config', newSha).catch(e => { throw new Error(`save config: ${e.message}`); });
     bannerSha = newSha;
     showMessage('banner-message', 'success', 'Banner saved!');
     syncBannerUI();
@@ -658,12 +658,12 @@ async function saveAvatar() {
 
   try {
     const imgPath = `images/avatar.${avatarPendingExt}`;
-    const imgSha = await gh.getSha(imgPath);
-    await gh.putRaw(imgPath, avatarPendingBase64, 'Upload site avatar', imgSha);
+    const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
+    await gh.putRaw(imgPath, avatarPendingBase64, 'Upload site avatar', imgSha).catch(e => { throw new Error(`upload avatar: ${e.message}`); });
 
     bannerData = { ...bannerData, avatarSrc: imgPath };
-    const newSha = await gh.getSha('data/banner.json');
-    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update site avatar', newSha);
+    const newSha = await gh.getSha('data/banner.json').catch(e => { throw new Error(`getSha(banner.json): ${e.message}`); });
+    await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update site avatar', newSha).catch(e => { throw new Error(`save config: ${e.message}`); });
 
     applyAvatar('/' + imgPath);
     avatarPendingBase64 = null;
