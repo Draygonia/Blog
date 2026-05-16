@@ -94,15 +94,21 @@ async function login() {
     const res = await fetch('https://api.github.com/user', {
       headers: { Authorization: `token ${t}` },
     });
-    if (!res.ok) throw new Error('Invalid token');
+    if (!res.ok) throw new Error('Invalid token — check your token and try again.');
+
+    const { owner, repo } = CONFIG;
+    const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: { Authorization: `token ${t}` },
+    });
+    if (!repoRes.ok) throw new Error(`Token can't access ${owner}/${repo}. Make sure it has "repo" scope (not just "public_repo").`);
 
     token = t;
     gh = new GitHub(token);
     sessionStorage.setItem('gh_token', token);
     errEl.style.display = 'none';
     showAdmin();
-  } catch {
-    errEl.textContent = 'Could not authenticate. Check your token and try again.';
+  } catch (err) {
+    errEl.textContent = err.message;
     errEl.style.display = '';
   }
 }
