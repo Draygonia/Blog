@@ -475,7 +475,7 @@ async function loadBannerTab() {
 
   const preview = document.getElementById('avatar-preview');
   if (preview && bannerData.avatarSrc) {
-    preview.src = rawUrl(bannerData.avatarSrc);
+    preview.src = '/' + bannerData.avatarSrc;
     preview.style.display = '';
   }
 }
@@ -506,7 +506,7 @@ function updateBannerPreview() {
     preview.style.backgroundPosition = `${px}% ${py}%`;
     preview.style.backgroundRepeat = 'no-repeat';
   } else if (bannerData.type === 'image' && bannerData.src) {
-    const url = rawUrl(bannerData.src);
+    const url = '/' + bannerData.src;
     preview.style.backgroundImage = `url(${JSON.stringify(url)})`;
     preview.style.backgroundSize = 'cover';
     preview.style.backgroundPosition = `${px}% ${py}%`;
@@ -665,7 +665,7 @@ async function saveAvatar() {
     const newSha = await gh.getSha('data/banner.json');
     await gh.putFile('data/banner.json', JSON.stringify(bannerData, null, 2), 'Update site avatar', newSha);
 
-    applyAvatar(rawUrl(imgPath));
+    applyAvatar('/' + imgPath);
     avatarPendingBase64 = null;
     avatarPendingExt = null;
     showMessage('avatar-message', 'success', 'Avatar saved!');
