@@ -45,7 +45,7 @@ function rawUrl(path) {
 async function loadPostsGrid(containerId) {
   const el = document.getElementById(containerId);
   try {
-    const res = await fetch('/data/posts.json');
+    const res = await fetch(rawUrl('data/posts.json'), { cache: 'no-store' });
     if (!res.ok) throw new Error('posts.json not found');
     const { posts } = await res.json();
 
@@ -61,7 +61,7 @@ async function loadPostsGrid(containerId) {
 
     const postData = await Promise.all(mdFiles.map(async filename => {
       try {
-        const r = await fetch(`/posts/${filename}`);
+        const r = await fetch(rawUrl(`posts/${filename}`), { cache: 'no-store' });
         const raw = await r.text();
         const { data } = parseFrontmatter(raw);
         return { ...data, filename };
@@ -88,7 +88,7 @@ async function loadPost(containerId) {
   if (!slug) { el.innerHTML = '<p>No post specified.</p>'; return; }
 
   try {
-    const res = await fetch(`/posts/${slug}`);
+    const res = await fetch(rawUrl(`posts/${slug}`), { cache: 'no-store' });
     if (!res.ok) throw new Error('Post not found');
     const raw = await res.text();
     const { data, content } = parseFrontmatter(raw);
@@ -114,7 +114,7 @@ async function loadPost(containerId) {
 async function loadLinksGrid(containerId) {
   const el = document.getElementById(containerId);
   try {
-    const res = await fetch('/data/links.json');
+    const res = await fetch(rawUrl('data/links.json'), { cache: 'no-store' });
     if (!res.ok) throw new Error('links.json not found');
     const { links } = await res.json();
 
