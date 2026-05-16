@@ -1,6 +1,8 @@
 {
-  "type": "gradient",
+  "type": "image",
+  "src": "images/banners/banner.jpg",
   "height": 160,
   "posX": 50,
-  "posY": 50
+  "posY": 21,
+  "avatarSrc": null
 }
