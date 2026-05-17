@@ -289,6 +289,7 @@ function renderLinkList() {
           <div class="admin-list-item-meta">${escHtml(l.url)}${l.category ? ` &middot; ${escHtml(l.category)}` : ''}</div>
         </div>
         <div class="admin-list-item-actions">
+          <button class="btn btn-star btn-sm${l.featured ? ' active' : ''}" onclick="toggleFeatured(${i})" title="${l.featured ? 'Remove from featured' : 'Mark as featured'}">&#9733;</button>
           <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
         </div>
       </div>
@@ -362,6 +363,11 @@ async function addLink() {
 async function deleteLink(index) {
   if (!confirm('Remove this link?')) return;
   linksData.links.splice(index, 1);
+  await saveLinks(null, null);
+}
+
+async function toggleFeatured(index) {
+  linksData.links[index].featured = !linksData.links[index].featured;
   await saveLinks(null, null);
 }
 

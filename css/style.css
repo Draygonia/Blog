@@ -415,6 +415,15 @@ body.mobile-view #sidebar { width: 100%; }
 .link-card-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
 .link-card-url { font-size: 10px; color: var(--text-dim); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+/* ===== FEATURED LINK CARDS ===== */
+.link-card--featured {
+  border-color: #c9a227;
+  box-shadow: 0 0 0 1px rgba(201,162,39,0.25), 0 0 10px rgba(201,162,39,0.1);
+}
+.link-card--featured .link-card-title { color: #c9a227; }
+.link-card--featured:hover { border-color: #e0b830; box-shadow: 0 0 0 1px rgba(224,184,48,0.35), 0 0 14px rgba(224,184,48,0.15); }
+.link-card--featured:hover .link-card-title { color: #e0b830; }
+
 /* ===== WALLET CARDS ===== */
 .wallet-card {
   background: var(--bg);
@@ -534,6 +543,10 @@ body.mobile-view #sidebar { width: 100%; }
 .btn-secondary:hover { border-color: var(--text-muted); color: var(--text); text-decoration: none; }
 .btn-danger { background: transparent; color: #e04030; border-color: #503030; }
 .btn-danger:hover { background: rgba(200,50,40,.15); text-decoration: none; }
+.btn-star { background: transparent; color: var(--text-muted); border-color: var(--border); }
+.btn-star:hover { border-color: #c9a227; color: #c9a227; text-decoration: none; }
+.btn-star.active { color: #c9a227; border-color: #c9a227; }
+.btn-star.active:hover { background: rgba(201,162,39,.12); }
 .btn-sm { padding: 3px 9px; font-size: 10px; }
 .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 14px; }

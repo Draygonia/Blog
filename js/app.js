@@ -131,7 +131,7 @@ async function loadLinksGrid(containerId) {
     });
 
     const renderCard = l => `
-      <a href="${escHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="link-card">
+      <a href="${escHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="link-card${l.featured ? ' link-card--featured' : ''}">
         <div class="link-card-title">${escHtml(l.title)}</div>
         ${l.description ? `<div class="link-card-desc">${escHtml(l.description)}</div>` : ''}
         <div class="link-card-url">${escHtml(l.url)}</div>
