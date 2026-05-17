@@ -71,6 +71,12 @@
       "url": "https://billburr.com",
       "description": "Bill Burr's weekly podcast of him rambling about life.",
       "category": "Podcasts"
+    },
+    {
+      "title": "Some More News",
+      "url": "https://www.somemorenews.com",
+      "description": "News and commentary by Cody Johnston.",
+      "category": "Podcasts"
     }
   ],
   "categories": [
