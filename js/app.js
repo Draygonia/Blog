@@ -130,20 +130,12 @@ async function loadLinksGrid(containerId) {
       groups[cat].push(l);
     });
 
-    const renderCard = l => {
-      const isPodcast = (l.category === 'Podcasts') && l.rssUrl;
-      const playBtn = isPodcast
-        ? `<button class="podcast-play-btn" data-rss-url="${escHtml(l.rssUrl)}" data-podcast-name="${escHtml(l.title)}"
-             onclick="event.preventDefault();PodcastPlayer.playEpisode(this.dataset.rssUrl,this.dataset.podcastName,this)">▶ Play Latest</button>`
-        : '';
-      return `
-      <a href="${escHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="link-card${l.featured ? ' link-card--featured' : ''}${isPodcast ? ' link-card--podcast' : ''}">
+    const renderCard = l => `
+      <a href="${escHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="link-card${l.featured ? ' link-card--featured' : ''}">
         <div class="link-card-title">${escHtml(l.title)}</div>
         ${l.description ? `<div class="link-card-desc">${escHtml(l.description)}</div>` : ''}
         <div class="link-card-url">${escHtml(l.url)}</div>
-        ${playBtn}
       </a>`;
-    };
 
     const named = Object.keys(groups).filter(k => k).sort();
     const uncategorized = groups[''] || [];
