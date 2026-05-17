@@ -5,9 +5,28 @@
       "url": "https://www.refactoringui.com",
       "description": "Make your apps look better without being a designer.",
       "category": "Design"
+    },
+    {
+      "title": "The Last Podcast on the Left",
+      "url": "https://www.lastpodcastontheleft.com",
+      "description": "Comedy horror podcast covering true crime, cults, and the paranormal.",
+      "category": "Podcasts"
+    },
+    {
+      "title": "The Dick Show",
+      "url": "https://dick.show",
+      "description": "A podcast about what makes men rage.",
+      "category": "Podcasts"
+    },
+    {
+      "title": "Darknet Diaries",
+      "url": "https://darknetdiaries.com",
+      "description": "True stories from the dark side of the internet.",
+      "category": "Podcasts"
     }
   ],
   "categories": [
-    "Test"
+    "Test",
+    "Podcasts"
   ]
 }
