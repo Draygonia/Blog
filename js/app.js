@@ -45,7 +45,7 @@ function rawUrl(path) {
 async function loadPostsGrid(containerId) {
   const el = document.getElementById(containerId);
   try {
-    const res = await fetch('/data/posts.json');
+    const res = await fetch(rawUrl('data/posts.json'), { cache: 'no-store' });
     if (!res.ok) throw new Error('posts.json not found');
     const { posts } = await res.json();
 
@@ -61,7 +61,7 @@ async function loadPostsGrid(containerId) {
 
     const postData = await Promise.all(mdFiles.map(async filename => {
       try {
-        const r = await fetch(`/posts/${filename}`);
+        const r = await fetch(rawUrl(`posts/${filename}`), { cache: 'no-store' });
         const raw = await r.text();
         const { data } = parseFrontmatter(raw);
         return { ...data, filename };
@@ -88,7 +88,7 @@ async function loadPost(containerId) {
   if (!slug) { el.innerHTML = '<p>No post specified.</p>'; return; }
 
   try {
-    const res = await fetch(`/posts/${slug}`);
+    const res = await fetch(rawUrl(`posts/${slug}`), { cache: 'no-store' });
     if (!res.ok) throw new Error('Post not found');
     const raw = await res.text();
     const { data, content } = parseFrontmatter(raw);
@@ -110,11 +110,11 @@ async function loadPost(containerId) {
   }
 }
 
-// Links page: render links grid
+// Links page: render links grid grouped by category
 async function loadLinksGrid(containerId) {
   const el = document.getElementById(containerId);
   try {
-    const res = await fetch('/data/links.json');
+    const res = await fetch(rawUrl('data/links.json'), { cache: 'no-store' });
     if (!res.ok) throw new Error('links.json not found');
     const { links } = await res.json();
 
@@ -123,15 +123,45 @@ async function loadLinksGrid(containerId) {
       return;
     }
 
-    el.innerHTML = links.map(l => `
+    const groups = {};
+    links.forEach(l => {
+      const cat = l.category || '';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(l);
+    });
+
+    const renderCard = l => `
       <a href="${escHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="link-card">
-        ${l.category ? `<div class="link-card-category">${escHtml(l.category)}</div>` : ''}
         <div class="link-card-title">${escHtml(l.title)}</div>
         ${l.description ? `<div class="link-card-desc">${escHtml(l.description)}</div>` : ''}
         <div class="link-card-url">${escHtml(l.url)}</div>
-      </a>
-    `).join('');
+      </a>`;
+
+    const named = Object.keys(groups).filter(k => k).sort();
+    const uncategorized = groups[''] || [];
+
+    el.innerHTML = [
+      ...named.map(cat => `
+        <div class="links-category">
+          <div class="links-category-header">${escHtml(cat)}</div>
+          <div class="links-grid">${groups[cat].map(renderCard).join('')}</div>
+        </div>`),
+      ...(uncategorized.length ? [`
+        <div class="links-category">
+          ${named.length ? '<div class="links-category-header">Other</div>' : ''}
+          <div class="links-grid">${uncategorized.map(renderCard).join('')}</div>
+        </div>`] : [])
+    ].join('');
   } catch (err) {
     el.innerHTML = `<div class="empty-state"><p>Could not load links: ${escHtml(err.message)}</p></div>`;
   }
 }
+
+function initNavActive() {
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('#admin-bar a.admin-btn').forEach(a => {
+    if (a.getAttribute('href') === page) a.classList.add('admin-btn-active');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initNavActive);

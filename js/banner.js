@@ -1,13 +1,13 @@
 async function loadRepoBanner() {
   try {
-    const res = await fetch('/data/banner.json');
+    const res = await fetch(rawUrl('data/banner.json'), { cache: 'no-store' });
     if (!res.ok) {
       startBannerCycle(10000);
       return;
     }
     const cfg = await res.json();
 
-    if (cfg.avatarSrc) applyAvatar('/' + cfg.avatarSrc);
+    if (cfg.avatarSrc) applyAvatar(rawUrl(cfg.avatarSrc));
 
     const banners = Array.isArray(cfg.banners) && cfg.banners.length > 0
       ? cfg.banners
@@ -33,7 +33,7 @@ function applyBannerConfig(cfg) {
   banner.style.height = (cfg.height || 160) + 'px';
 
   if (cfg.type === 'image' && cfg.src) {
-    const url = '/' + cfg.src;
+    const url = rawUrl(cfg.src);
     banner.style.backgroundImage = `url(${JSON.stringify(url)})`;
     banner.style.backgroundSize = 'cover';
     banner.style.backgroundPosition = `${cfg.posX ?? 50}% ${cfg.posY ?? 50}%`;
