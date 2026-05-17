@@ -85,6 +85,169 @@ async function showAdmin() {
   await Promise.all([loadPosts(), loadLinks(), loadWallets(), loadPostsManifest()]);
 }
 
+// ---- Socials ----
+
+let socialsData = { socials: [], games: [] };
+let socialsSha = null;
+
+async function loadSocials() {
+  const listEl = document.getElementById('social-list');
+  const gameEl = document.getElementById('game-list');
+  if (!listEl) return;
+  listEl.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
+  try {
+    const { content, sha } = await gh.getFile('data/socials.json');
+    socialsData = JSON.parse(content);
+    socialsSha = sha;
+    renderSocialList();
+    renderGameList();
+  } catch {
+    socialsData = { socials: [], games: [] };
+    socialsSha = null;
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">No platforms yet.</p>';
+    if (gameEl) gameEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">No games yet.</p>';
+  }
+}
+
+function renderSocialList() {
+  const listEl = document.getElementById('social-list');
+  if (!listEl) return;
+  const items = socialsData.socials || [];
+  if (!items.length) {
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;margin-bottom:8px">No platforms yet.</p>';
+    return;
+  }
+  listEl.innerHTML = items.map((s, i) => {
+    const isTag = s.category === 'Gamer Tags';
+    const val = isTag ? (s.tag || '—') : (s.url || '—');
+    return `
+      <div class="admin-list-item" id="social-row-${i}">
+        <div class="admin-list-item-info">
+          <div class="admin-list-item-title">${escHtml(s.platform)} <span style="color:var(--text-muted);font-weight:400;font-size:10px">${escHtml(s.category)}</span></div>
+          <div class="admin-list-item-meta" id="social-val-${i}">${escHtml(val)}</div>
+        </div>
+        <div class="admin-list-item-actions">
+          <button class="btn btn-secondary btn-sm" onclick="startEditSocial(${i})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSocial(${i})">Delete</button>
+        </div>
+      </div>
+      <div id="social-edit-${i}" style="display:none;padding:6px 12px 10px;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);background:var(--bg);margin-bottom:4px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" id="social-edit-input-${i}" value="${escHtml(isTag ? (s.tag || '') : (s.url || ''))}"
+            placeholder="${isTag ? 'Gamertag' : 'https://'}"
+            style="flex:1;padding:5px 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;font-family:var(--font);outline:none">
+          <button class="btn btn-primary btn-sm" onclick="saveSocialEdit(${i})">Save</button>
+          <button class="btn btn-secondary btn-sm" onclick="cancelSocialEdit(${i})">Cancel</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function startEditSocial(i) {
+  document.getElementById(`social-edit-${i}`).style.display = '';
+  document.getElementById(`social-edit-input-${i}`).focus();
+}
+
+function cancelSocialEdit(i) {
+  document.getElementById(`social-edit-${i}`).style.display = 'none';
+}
+
+async function saveSocialEdit(i) {
+  const val = document.getElementById(`social-edit-input-${i}`).value.trim();
+  const isTag = socialsData.socials[i].category === 'Gamer Tags';
+  if (isTag) socialsData.socials[i].tag = val;
+  else socialsData.socials[i].url = val;
+  await saveSocials(null, null, 'social-message');
+}
+
+async function deleteSocial(i) {
+  if (!confirm('Remove this platform?')) return;
+  socialsData.socials.splice(i, 1);
+  await saveSocials(null, null, 'social-message');
+}
+
+function onSocialCategoryChange() {
+  const isTag = document.getElementById('social-category').value === 'Gamer Tags';
+  document.getElementById('social-url-group').style.display = isTag ? 'none' : '';
+  document.getElementById('social-tag-group').style.display = isTag ? '' : 'none';
+}
+
+async function addSocial() {
+  const platform = document.getElementById('social-platform').value.trim();
+  const category = document.getElementById('social-category').value;
+  const url  = document.getElementById('social-url').value.trim();
+  const tag  = document.getElementById('social-tag').value.trim();
+
+  if (!platform) { showMessage('social-message', 'error', 'Platform name is required.'); return; }
+
+  const entry = { platform, category };
+  if (category === 'Gamer Tags') entry.tag = tag;
+  else entry.url = url;
+
+  socialsData.socials = [...(socialsData.socials || []), entry];
+  await saveSocials('add-social-btn', 'Add Platform', 'social-message');
+}
+
+function renderGameList() {
+  const listEl = document.getElementById('game-list');
+  if (!listEl) return;
+  const games = socialsData.games || [];
+  if (!games.length) {
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;margin-bottom:8px">No games yet.</p>';
+    return;
+  }
+  listEl.innerHTML = games.map((g, i) => `
+    <div class="admin-list-item">
+      <div class="admin-list-item-info">
+        <div class="admin-list-item-title">${escHtml(g.title)}</div>
+        <div class="admin-list-item-meta">game.html?id=${escHtml(g.id)}</div>
+      </div>
+      <div class="admin-list-item-actions">
+        <button class="btn btn-danger btn-sm" onclick="deleteGame(${i})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function addGame() {
+  const title = document.getElementById('game-title-input').value.trim();
+  if (!title) { showMessage('game-message', 'error', 'Game title is required.'); return; }
+
+  const id = title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
+  if ((socialsData.games || []).some(g => g.id === id)) {
+    showMessage('game-message', 'error', 'A game with this title already exists.');
+    return;
+  }
+  socialsData.games = [...(socialsData.games || []), { id, title }];
+  await saveSocials('add-game-btn', 'Add Game', 'game-message');
+}
+
+async function deleteGame(i) {
+  if (!confirm('Remove this game?')) return;
+  socialsData.games.splice(i, 1);
+  await saveSocials(null, null, 'game-message');
+}
+
+async function saveSocials(btnId, btnLabel, msgId) {
+  const btn = btnId ? document.getElementById(btnId) : null;
+  if (btn) { btn.textContent = 'Saving...'; btn.disabled = true; }
+
+  try {
+    const content = JSON.stringify(socialsData, null, 2);
+    const freshSha = await gh.getSha('data/socials.json');
+    await gh.putFile('data/socials.json', content, 'Update socials', freshSha);
+    showMessage(msgId, 'success', 'Saved!');
+    if (btnId === 'add-social-btn') document.getElementById('social-form').reset();
+    if (btnId === 'add-game-btn') document.getElementById('game-form').reset();
+    await loadSocials();
+  } catch (err) {
+    showMessage(msgId, 'error', `Error: ${err.message}`);
+    await loadSocials();
+  } finally {
+    if (btn) { btn.textContent = btnLabel; btn.disabled = false; }
+  }
+}
+
 async function login() {
   const t = document.getElementById('token-input').value.trim();
   const errEl = document.getElementById('auth-error');
@@ -817,6 +980,7 @@ function showMessage(id, type, text) {
 }
 
 let bannerTabLoaded = false;
+let socialsTabLoaded = false;
 
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
@@ -826,6 +990,10 @@ function switchTab(name) {
     initBannerDrop();
     initAvatarDrop();
     loadBannerTab();
+  }
+  if (name === 'socials' && !socialsTabLoaded) {
+    socialsTabLoaded = true;
+    loadSocials();
   }
 }
 

@@ -21,6 +21,7 @@
   <div id="admin-bar">
     <a href="index.html" class="admin-btn">POSTS</a>
     <a href="links.html" class="admin-btn">LINKS</a>
+    <a href="socials.html" class="admin-btn">SOCIALS</a>
     <a href="donate.html" class="admin-btn">DONATE</a>
     <a href="admin.html" class="admin-btn">ADMIN</a>
   </div>
@@ -66,6 +67,7 @@
           <div class="tabs">
             <div class="tab active" data-tab="posts" onclick="switchTab('posts')">Posts</div>
             <div class="tab" data-tab="links" onclick="switchTab('links')">Links</div>
+            <div class="tab" data-tab="socials" onclick="switchTab('socials')">Socials</div>
             <div class="tab" data-tab="wallets" onclick="switchTab('wallets')">Wallets</div>
             <div class="tab" data-tab="banner" onclick="switchTab('banner')">Banner + Avatar</div>
           </div>
@@ -140,6 +142,60 @@
               </div>
               <button type="button" id="add-link-btn" class="btn btn-primary" onclick="addLink()">Add Link</button>
             </form>
+          </div>
+
+          <!-- Socials tab -->
+          <div class="tab-panel" id="tab-socials">
+
+            <p class="section-label">Platforms</p>
+            <div id="social-list"></div>
+
+            <hr class="divider">
+
+            <p class="section-label">Add Platform</p>
+            <div id="social-message" style="display:none"></div>
+            <form id="social-form" onsubmit="return false">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+                <div class="form-group">
+                  <label>Platform Name</label>
+                  <input type="text" id="social-platform" placeholder="Steam" />
+                </div>
+                <div class="form-group">
+                  <label>Category</label>
+                  <select id="social-category" onchange="onSocialCategoryChange()">
+                    <option value="Socials">Socials</option>
+                    <option value="Gamer Tags">Gamer Tags</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group" id="social-url-group">
+                <label>Profile URL</label>
+                <input type="url" id="social-url" placeholder="https://..." />
+              </div>
+              <div class="form-group" id="social-tag-group" style="display:none">
+                <label>Gamer Tag / Username</label>
+                <input type="text" id="social-tag" placeholder="YourTag#1234" />
+              </div>
+              <button type="button" id="add-social-btn" class="btn btn-primary" onclick="addSocial()">Add Platform</button>
+            </form>
+
+            <hr class="divider">
+
+            <p class="section-label">Games</p>
+            <div id="game-list"></div>
+
+            <hr class="divider">
+
+            <p class="section-label">Add Game</p>
+            <div id="game-message" style="display:none"></div>
+            <form id="game-form" onsubmit="return false">
+              <div class="form-group">
+                <label>Game Title</label>
+                <input type="text" id="game-title-input" placeholder="Diablo 2 Resurrected" />
+              </div>
+              <button type="button" id="add-game-btn" class="btn btn-primary" onclick="addGame()">Add Game</button>
+            </form>
+
           </div>
 
           <!-- Wallets tab -->

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="no-referrer">
-  <title>Links &mdash; Draygonia</title>
+  <title>Game &mdash; Draygonia</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -38,20 +38,18 @@
 
     <div id="main-content">
       <div class="panel">
-        <div class="panel-header">
-          <div class="panel-accent"></div>
-          <span class="panel-title">Links</span>
+        <div class="breadcrumb">
+          <a href="socials.html">Socials</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span class="breadcrumb-current" id="breadcrumb-game">Loading&hellip;</span>
         </div>
-        <div class="panel-body" style="padding:0 12px 12px">
-          <div id="links-grid">
-            <div class="loading"><div class="spinner"></div> Loading links&hellip;</div>
-          </div>
+        <div id="game-container">
+          <div class="loading" style="padding:20px"><div class="spinner"></div> Loading&hellip;</div>
         </div>
       </div>
     </div>
 
     <div id="sidebar">
-
       <div class="panel">
         <div class="panel-header">
           <div class="panel-accent"></div>
@@ -70,8 +68,8 @@
           <div class="user-status"><span class="status-dot"></span> online now</div>
         </div>
       </div>
-
     </div>
+
   </div>
 
   <footer>
@@ -81,8 +79,9 @@
   <script src="js/config.js"></script>
   <script src="js/github.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/socials.js"></script>
   <script src="js/banner.js"></script>
   <script src="js/theme.js"></script>
-  <script>loadLinksGrid('links-grid');</script>
+  <script>loadGamePage('game-container');</script>
 </body>
 </html>
