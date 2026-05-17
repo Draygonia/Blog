@@ -59,6 +59,12 @@
       "url": "https://blindmike.net",
       "description": "Comedy history podcast by Blind Mike Geary.",
       "category": "Podcasts"
+    },
+    {
+      "title": "The Biggest Solution in the Universe",
+      "url": "https://thebiggestproblemintheuniverse.com",
+      "description": "Maddox's bonus companion podcast to The Biggest Problem in the Universe.",
+      "category": "Podcasts"
     }
   ],
   "categories": [
