@@ -65,6 +65,12 @@
       "url": "https://thebiggestproblemintheuniverse.com",
       "description": "Maddox's bonus companion podcast to The Biggest Problem in the Universe.",
       "category": "Podcasts"
+    },
+    {
+      "title": "The Monday Morning Podcast",
+      "url": "https://billburr.com",
+      "description": "Bill Burr's weekly podcast of him rambling about life.",
+      "category": "Podcasts"
     }
   ],
   "categories": [
