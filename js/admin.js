@@ -265,7 +265,7 @@ async function toggleGameChars(gameId, rowIdx) {
   renderGameCharsPanel(gameId, rowIdx, data);
 }
 
-const D2R_CLASSES = ['Amazon','Necromancer','Barbarian','Sorceress','Paladin','Druid','Assassin'];
+const D2R_CLASSES = ['Amazon','Necromancer','Barbarian','Sorceress','Paladin','Druid','Assassin','Warlock'];
 const D2R_SLOTS   = ['head','amulet','chest','weapon','shield','gloves','belt','boots','ring1','ring2'];
 const SLOT_NAMES  = { head:'Helm', amulet:'Amulet', chest:'Armor', weapon:'Weapon', shield:'Shield', gloves:'Gloves', belt:'Belt', boots:'Boots', ring1:'Ring 1', ring2:'Ring 2' };
 const QUALITIES   = ['normal','magic','rare','set','unique','runeword','crafted'];
