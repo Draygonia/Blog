@@ -89,15 +89,27 @@ async function loadGamePage(containerId) {
   if (!id) { el.innerHTML = '<p>No game specified.</p>'; return; }
 
   try {
-    const res = await fetch(rawUrl('data/socials.json'), { cache: 'no-store' });
-    if (!res.ok) throw new Error('socials.json not found');
-    const data = await res.json();
-    const game = (data.games || []).find(g => g.id === id);
+    const [socialsRes, gameRes] = await Promise.all([
+      fetch(rawUrl('data/socials.json'), { cache: 'no-store' }),
+      fetch(rawUrl(`data/games/${id}.json`), { cache: 'no-store' }),
+    ]);
+
+    if (!socialsRes.ok) throw new Error('socials.json not found');
+    const socialsData = await socialsRes.json();
+    const game = (socialsData.games || []).find(g => g.id === id);
     if (!game) throw new Error('Game not found');
 
     document.title = `${game.title} — Draygonia`;
     document.getElementById('breadcrumb-game').textContent = game.title;
+
     el.innerHTML = `<div class="game-content-area" id="game-body"></div>`;
+
+    if (gameRes.ok) {
+      const gameData = await gameRes.json();
+      if (typeof D2R !== 'undefined') {
+        D2R.render('game-body', gameData);
+      }
+    }
   } catch (err) {
     el.innerHTML = `<p style="color:var(--text-muted);padding:18px">${escHtml(err.message)}</p>`;
   }

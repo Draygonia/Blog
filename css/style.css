@@ -813,6 +813,177 @@ body.mobile-view #sidebar { width: 100%; }
   min-height: 120px;
 }
 
+/* ===== D2R CHARACTER DISPLAY ===== */
+.d2r-empty { padding: 24px; text-align: center; color: var(--text-muted); font-size: 12px; }
+
+/* Roster */
+.d2r-roster {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 18px;
+}
+.d2r-char-card {
+  background: #12100a;
+  border: 1px solid #5a4a28;
+  border-radius: 4px;
+  padding: 16px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.d2r-char-card:hover { border-color: #c7a227; background: #1a160e; }
+.d2r-char-class {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8a7040;
+  margin-bottom: 2px;
+}
+.d2r-char-name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #c7a227;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.d2r-char-level { font-size: 11px; color: #7a6848; margin-bottom: 10px; }
+.d2r-hc-badge {
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font);
+  background: #8b0000;
+  color: #ffaaaa;
+  border-radius: 3px;
+  padding: 1px 5px;
+  letter-spacing: 0.5px;
+}
+.d2r-view-btn {
+  background: transparent;
+  border: 1px solid #5a4a28;
+  border-radius: 3px;
+  color: #c7a227;
+  font-size: 11px;
+  font-family: var(--font);
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.d2r-view-btn:hover { border-color: #c7a227; background: rgba(199,162,39,0.1); color: #e8c040; }
+
+/* Detail view */
+.d2r-detail { padding: 0; }
+.d2r-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #3a2e18;
+  background: #0e0c07;
+}
+.d2r-back-btn {
+  background: transparent;
+  border: 1px solid #5a4a28;
+  border-radius: 3px;
+  color: #8a7040;
+  font-size: 11px;
+  font-family: var(--font);
+  padding: 3px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+.d2r-back-btn:hover { border-color: #c7a227; color: #c7a227; }
+.d2r-detail-title { display: flex; flex-direction: column; gap: 2px; }
+.d2r-detail-name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #c7a227;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.d2r-detail-meta { font-size: 11px; color: #7a6848; }
+
+/* Equipment grid */
+.d2r-equip-grid {
+  display: grid;
+  padding: 18px;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    ".      head   amulet"
+    "weapon chest  shield"
+    "gloves belt   boots "
+    "ring1  .      ring2 ";
+  background: #0e0c07;
+}
+.d2r-slot-head   { grid-area: head; }
+.d2r-slot-amulet { grid-area: amulet; }
+.d2r-slot-chest  { grid-area: chest; }
+.d2r-slot-weapon { grid-area: weapon; }
+.d2r-slot-shield { grid-area: shield; }
+.d2r-slot-gloves { grid-area: gloves; }
+.d2r-slot-belt   { grid-area: belt; }
+.d2r-slot-boots  { grid-area: boots; }
+.d2r-slot-ring1  { grid-area: ring1; }
+.d2r-slot-ring2  { grid-area: ring2; }
+
+.d2r-slot {
+  background: #12100a;
+  border: 1px solid #3a2e18;
+  border-radius: 4px;
+  padding: 10px 10px 8px;
+  min-height: 70px;
+}
+.d2r-slot--empty { opacity: 0.4; }
+.d2r-slot-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #5a4a28;
+  margin-bottom: 5px;
+}
+.d2r-slot-empty-text { font-size: 12px; color: #3a2e18; }
+.d2r-item-name {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 5px;
+}
+.d2r-affixes { display: flex; flex-direction: column; gap: 2px; }
+.d2r-affix { font-size: 10px; color: #8ab0c8; line-height: 1.4; }
+
+/* Item quality colors */
+.q-normal   { color: #d0cfc8; }
+.q-magic    { color: #6464ff; }
+.q-rare     { color: #e8e840; }
+.q-set      { color: #00c800; }
+.q-unique   { color: #c7a227; }
+.q-runeword { color: #c4a35a; }
+.q-crafted  { color: #c86400; }
+
+@media (max-width: 700px) {
+  .d2r-equip-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "head   amulet"
+      "chest  shield"
+      "weapon gloves"
+      "belt   boots "
+      "ring1  ring2 ";
+  }
+}
+
 /* ===== FOOTER ===== */
 footer { background: var(--footer-bg); border-top: 1px solid var(--border); color: var(--text-muted); font-size: 11px; text-align: center; padding: 14px; margin-top: 10px; transition: background 0.2s; }
 footer a { color: var(--text-muted); }

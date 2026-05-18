@@ -197,14 +197,18 @@ function renderGameList() {
     return;
   }
   listEl.innerHTML = games.map((g, i) => `
-    <div class="admin-list-item">
+    <div class="admin-list-item" id="game-row-${i}">
       <div class="admin-list-item-info">
         <div class="admin-list-item-title">${escHtml(g.title)}</div>
         <div class="admin-list-item-meta">game.html?id=${escHtml(g.id)}</div>
       </div>
       <div class="admin-list-item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="toggleGameChars('${escHtml(g.id)}', ${i})">Characters &rsaquo;</button>
         <button class="btn btn-danger btn-sm" onclick="deleteGame(${i})">Delete</button>
       </div>
+    </div>
+    <div id="game-chars-${i}" style="display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);background:var(--bg);padding:12px;margin-bottom:4px">
+      <div id="game-chars-inner-${i}"><div class="loading"><div class="spinner"></div> Loading…</div></div>
     </div>
   `).join('');
 }
@@ -220,12 +224,184 @@ async function addGame() {
   }
   socialsData.games = [...(socialsData.games || []), { id, title }];
   await saveSocials('add-game-btn', 'Add Game', 'game-message');
+  // Initialize empty game data file
+  await saveGameData(id, { characters: [] }, true);
 }
 
 async function deleteGame(i) {
   if (!confirm('Remove this game?')) return;
   socialsData.games.splice(i, 1);
   await saveSocials(null, null, 'game-message');
+}
+
+// ---- Game character management ----
+
+const gameDataCache = {};
+
+async function loadGameData(gameId) {
+  try {
+    const { content } = await gh.getFile(`data/games/${gameId}.json`);
+    gameDataCache[gameId] = JSON.parse(content);
+  } catch {
+    gameDataCache[gameId] = { characters: [] };
+  }
+  return gameDataCache[gameId];
+}
+
+async function saveGameData(gameId, data, silent) {
+  const path = `data/games/${gameId}.json`;
+  const freshSha = await gh.getSha(path);
+  await gh.putFile(path, JSON.stringify(data, null, 2), `Update ${gameId}`, freshSha);
+  gameDataCache[gameId] = data;
+  if (!silent) showMessage('game-message', 'success', 'Characters saved!');
+}
+
+async function toggleGameChars(gameId, rowIdx) {
+  const panel = document.getElementById(`game-chars-${rowIdx}`);
+  if (!panel) return;
+  if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+  panel.style.display = '';
+  const data = await loadGameData(gameId);
+  renderGameCharsPanel(gameId, rowIdx, data);
+}
+
+const D2R_CLASSES = ['Amazon','Necromancer','Barbarian','Sorceress','Paladin','Druid','Assassin'];
+const D2R_SLOTS   = ['head','amulet','chest','weapon','shield','gloves','belt','boots','ring1','ring2'];
+const SLOT_NAMES  = { head:'Helm', amulet:'Amulet', chest:'Armor', weapon:'Weapon', shield:'Shield', gloves:'Gloves', belt:'Belt', boots:'Boots', ring1:'Ring 1', ring2:'Ring 2' };
+const QUALITIES   = ['normal','magic','rare','set','unique','runeword','crafted'];
+
+function renderGameCharsPanel(gameId, rowIdx, data) {
+  const inner = document.getElementById(`game-chars-inner-${rowIdx}`);
+  if (!inner) return;
+  const chars = data.characters || [];
+  const charList = chars.length
+    ? chars.map((c, ci) => `
+        <div class="admin-list-item" style="margin-bottom:4px" id="char-row-${rowIdx}-${ci}">
+          <div class="admin-list-item-info">
+            <div class="admin-list-item-title">${escHtml(c.name)} <span style="color:var(--text-muted);font-weight:400">${escHtml(c.class)} · Lv${escHtml(String(c.level))}${c.hardcore?' · HC':''}</span></div>
+          </div>
+          <div class="admin-list-item-actions">
+            <button class="btn btn-secondary btn-sm" onclick="toggleEquipEditor('${escHtml(gameId)}',${rowIdx},${ci})">Equipment</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCharacter('${escHtml(gameId)}',${rowIdx},${ci})">Delete</button>
+          </div>
+        </div>
+        <div id="equip-editor-${rowIdx}-${ci}" style="display:none;margin-bottom:8px">
+          ${renderEquipEditor(c, rowIdx, ci)}
+        </div>`).join('')
+    : '<p style="color:var(--text-muted);font-size:.875rem;margin-bottom:8px">No characters yet.</p>';
+
+  inner.innerHTML = `
+    ${charList}
+    <hr class="divider" style="margin:10px 0">
+    <p class="section-label" style="margin-bottom:6px">Add Character</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="new-char-name-${rowIdx}" placeholder="GrailSorc" />
+      </div>
+      <div class="form-group">
+        <label>Class</label>
+        <select id="new-char-class-${rowIdx}">${D2R_CLASSES.map(c=>`<option>${c}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px">
+      <div class="form-group">
+        <label>Level</label>
+        <input type="number" id="new-char-level-${rowIdx}" placeholder="99" min="1" max="99" value="1" />
+      </div>
+      <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:12px;gap:8px">
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:400;font-size:12px;cursor:pointer">
+          <input type="checkbox" id="new-char-hc-${rowIdx}"> Hardcore
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="addCharacter('${escHtml(gameId)}',${rowIdx})">Add Character</button>`;
+}
+
+function renderEquipEditor(c, rowIdx, ci) {
+  const eq = c.equipment || {};
+  const rows = D2R_SLOTS.map(slot => {
+    const item = eq[slot] || {};
+    const qualOpts = QUALITIES.map(q => `<option value="${q}"${item.quality===q?' selected':''}>${q}</option>`).join('');
+    const affixText = (item.affixes || []).join('\n');
+    return `
+      <tr>
+        <td style="padding:4px 8px 4px 0;white-space:nowrap;color:var(--text-muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">${SLOT_NAMES[slot]}</td>
+        <td style="padding:4px 4px 4px 0"><input type="text" id="eq-${rowIdx}-${ci}-${slot}-name" value="${escHtml(item.name||'')}" placeholder="Item name" style="width:100%;padding:4px 6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:11px;font-family:var(--font);outline:none"></td>
+        <td style="padding:4px 4px 4px 0"><select id="eq-${rowIdx}-${ci}-${slot}-q" style="padding:4px 5px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:11px;font-family:var(--font);outline:none">${qualOpts}</select></td>
+        <td style="padding:4px 0"><textarea id="eq-${rowIdx}-${ci}-${slot}-aff" rows="2" placeholder="one affix per line" style="width:100%;padding:4px 6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:11px;font-family:'Courier New',monospace;resize:vertical;outline:none;min-height:44px">${escHtml(affixText)}</textarea></td>
+      </tr>`;
+  }).join('');
+
+  return `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th style="text-align:left;font-size:9px;color:var(--text-muted);padding:0 8px 6px 0;text-transform:uppercase;letter-spacing:.05em">Slot</th>
+          <th style="text-align:left;font-size:9px;color:var(--text-muted);padding:0 4px 6px 0;text-transform:uppercase;letter-spacing:.05em">Item Name</th>
+          <th style="text-align:left;font-size:9px;color:var(--text-muted);padding:0 4px 6px 0;text-transform:uppercase;letter-spacing:.05em">Quality</th>
+          <th style="text-align:left;font-size:9px;color:var(--text-muted);padding:0 0 6px 0;text-transform:uppercase;letter-spacing:.05em">Affixes (one per line)</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+        <button class="btn btn-primary btn-sm" onclick="saveEquipment('${escHtml(c.id||'')}','${rowIdx}',${ci})">Save Equipment</button>
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('equip-editor-${rowIdx}-${ci}').style.display='none'">Close</button>
+        <span id="equip-msg-${rowIdx}-${ci}" style="font-size:11px;color:var(--green);display:none">Saved!</span>
+      </div>
+    </div>`;
+}
+
+function toggleEquipEditor(gameId, rowIdx, ci) {
+  const ed = document.getElementById(`equip-editor-${rowIdx}-${ci}`);
+  if (!ed) return;
+  ed.style.display = ed.style.display === 'none' ? '' : 'none';
+}
+
+async function addCharacter(gameId, rowIdx) {
+  const name  = document.getElementById(`new-char-name-${rowIdx}`)?.value.trim();
+  const cls   = document.getElementById(`new-char-class-${rowIdx}`)?.value;
+  const level = parseInt(document.getElementById(`new-char-level-${rowIdx}`)?.value) || 1;
+  const hc    = document.getElementById(`new-char-hc-${rowIdx}`)?.checked || false;
+  if (!name) { alert('Character name is required.'); return; }
+
+  const data = gameDataCache[gameId] || { characters: [] };
+  const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  data.characters = [...(data.characters || []), { id, name, class: cls, level, hardcore: hc, equipment: {} }];
+  await saveGameData(gameId, data);
+  renderGameCharsPanel(gameId, rowIdx, data);
+}
+
+async function deleteCharacter(gameId, rowIdx, ci) {
+  if (!confirm('Remove this character?')) return;
+  const data = gameDataCache[gameId] || { characters: [] };
+  data.characters.splice(ci, 1);
+  await saveGameData(gameId, data);
+  renderGameCharsPanel(gameId, rowIdx, data);
+}
+
+async function saveEquipment(charId, rowIdx, ci) {
+  const gameId = (socialsData.games || []).find(g => {
+    const data = gameDataCache[g.id];
+    return data && (data.characters || []).some(c => c.id === charId);
+  })?.id;
+  if (!gameId) return;
+
+  const data = gameDataCache[gameId];
+  if (!data || !data.characters[ci]) return;
+
+  const eq = {};
+  D2R_SLOTS.forEach(slot => {
+    const name = document.getElementById(`eq-${rowIdx}-${ci}-${slot}-name`)?.value.trim();
+    const quality = document.getElementById(`eq-${rowIdx}-${ci}-${slot}-q`)?.value || 'normal';
+    const affixRaw = document.getElementById(`eq-${rowIdx}-${ci}-${slot}-aff`)?.value || '';
+    const affixes = affixRaw.split('\n').map(a => a.trim()).filter(Boolean);
+    if (name) eq[slot] = { name, quality, affixes };
+  });
+  data.characters[ci].equipment = eq;
+  await saveGameData(gameId, data);
+  const msg = document.getElementById(`equip-msg-${rowIdx}-${ci}`);
+  if (msg) { msg.style.display = ''; setTimeout(() => { msg.style.display = 'none'; }, 3000); }
 }
 
 async function saveSocials(btnId, btnLabel, msgId) {
