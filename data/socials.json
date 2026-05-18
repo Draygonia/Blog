@@ -1,23 +1,100 @@
 {
   "socials": [
-    { "platform": "Twitter / X",          "url": "",  "category": "Socials" },
-    { "platform": "YouTube",               "url": "",  "category": "Socials" },
-    { "platform": "Twitch",                "url": "",  "category": "Socials" },
-    { "platform": "Instagram",             "url": "",  "category": "Socials" },
-    { "platform": "TikTok",               "url": "",  "category": "Socials" },
-    { "platform": "Discord",               "url": "",  "category": "Socials" },
-    { "platform": "Reddit",                "url": "",  "category": "Socials" },
-    { "platform": "Bluesky",               "url": "",  "category": "Socials" },
-    { "platform": "GitHub",                "url": "",  "category": "Socials" },
-    { "platform": "Facebook",              "url": "",  "category": "Socials" },
-    { "platform": "Steam",                 "tag": "",  "category": "Gamer Tags" },
-    { "platform": "Battle.net",            "tag": "",  "category": "Gamer Tags" },
-    { "platform": "Xbox Live",             "tag": "",  "category": "Gamer Tags" },
-    { "platform": "PlayStation Network",   "tag": "",  "category": "Gamer Tags" },
-    { "platform": "Nintendo Switch",       "tag": "",  "category": "Gamer Tags" },
-    { "platform": "Epic Games",            "tag": "",  "category": "Gamer Tags" },
-    { "platform": "Riot Games",            "tag": "",  "category": "Gamer Tags" },
-    { "platform": "Ubisoft Connect",       "tag": "",  "category": "Gamer Tags" }
+    {
+      "platform": "Twitter / X",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "YouTube",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "Twitch",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "Instagram",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "TikTok",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "Discord",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "Reddit",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "Bluesky",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "GitHub",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "Facebook",
+      "url": "",
+      "category": "Socials"
+    },
+    {
+      "platform": "Steam",
+      "tag": "",
+      "category": "Gamer Tags"
+    },
+    {
+      "platform": "Battle.net",
+      "tag": "",
+      "category": "Gamer Tags"
+    },
+    {
+      "platform": "Xbox Live",
+      "tag": "",
+      "category": "Gamer Tags"
+    },
+    {
+      "platform": "PlayStation Network",
+      "tag": "",
+      "category": "Gamer Tags"
+    },
+    {
+      "platform": "Nintendo Switch",
+      "tag": "",
+      "category": "Gamer Tags"
+    },
+    {
+      "platform": "Epic Games",
+      "tag": "",
+      "category": "Gamer Tags"
+    },
+    {
+      "platform": "Riot Games",
+      "tag": "",
+      "category": "Gamer Tags"
+    },
+    {
+      "platform": "Ubisoft Connect",
+      "tag": "",
+      "category": "Gamer Tags"
+    }
   ],
-  "games": []
+  "games": [
+    {
+      "id": "diablo-2-resurrected",
+      "title": "Diablo 2 Resurrected"
+    }
+  ]
 }
