@@ -106,9 +106,9 @@ async function loadGamePage(containerId) {
 
     if (gameRes.ok) {
       const gameData = await gameRes.json();
-      if (typeof D2R !== 'undefined') {
-        D2R.render('game-body', gameData);
-      }
+      const RENDERERS = { 'diablo-2-resurrected': window.D2R, 'guild-wars-2': window.GW2 };
+      const renderer = RENDERERS[id];
+      if (renderer) renderer.render('game-body', gameData);
     }
   } catch (err) {
     el.innerHTML = `<p style="color:var(--text-muted);padding:18px">${escHtml(err.message)}</p>`;
