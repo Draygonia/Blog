@@ -984,6 +984,174 @@ body.mobile-view #sidebar { width: 100%; }
   }
 }
 
+/* ===== GW2 CHARACTER DISPLAY ===== */
+.gw2-loading { padding: 24px; text-align: center; color: #3daec9; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.gw2-empty { padding: 32px 24px; text-align: center; background: #0a1628; border: 1px solid #1e3a5f; border-radius: 6px; margin: 18px; }
+.gw2-empty-title { font-family: 'Cinzel', Georgia, serif; font-size: 15px; color: #c9a227; margin-bottom: 10px; }
+.gw2-empty-text { font-size: 12px; color: #5a7888; line-height: 1.7; }
+.gw2-empty-text code { background: #0f1f35; border: 1px solid #1e3a5f; border-radius: 3px; padding: 1px 5px; font-size: 11px; color: #3daec9; }
+.gw2-error { padding: 18px; color: #e07a7a; font-size: 12px; }
+
+/* Roster */
+.gw2-roster {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+  padding: 18px;
+}
+.gw2-char-card {
+  background: #0a1628;
+  border: 1px solid #1e3a5f;
+  border-radius: 5px;
+  padding: 16px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.gw2-char-card:hover { border-color: #3daec9; background: #0f2040; }
+.gw2-char-name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #c9a227;
+  line-height: 1.3;
+}
+.gw2-char-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center; }
+.gw2-prof-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--prof-color) 15%, transparent);
+  color: var(--prof-color);
+  border: 1px solid color-mix(in srgb, var(--prof-color) 40%, transparent);
+  border-radius: 3px;
+  padding: 2px 6px;
+}
+.gw2-char-race { font-size: 10px; color: #4a7088; }
+.gw2-char-level { font-size: 11px; color: #3daec9; margin-bottom: 6px; }
+.gw2-view-btn {
+  background: transparent;
+  border: 1px solid #1e3a5f;
+  border-radius: 3px;
+  color: #3daec9;
+  font-size: 11px;
+  font-family: var(--font);
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.gw2-view-btn:hover { border-color: #3daec9; background: rgba(61,174,201,0.1); color: #5acce0; }
+
+/* Detail view */
+.gw2-detail { padding: 0; }
+.gw2-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #1e3a5f;
+  background: #071020;
+}
+.gw2-back-btn {
+  background: transparent;
+  border: 1px solid #1e3a5f;
+  border-radius: 3px;
+  color: #4a7088;
+  font-size: 11px;
+  font-family: var(--font);
+  padding: 3px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+.gw2-back-btn:hover { border-color: #3daec9; color: #3daec9; }
+.gw2-detail-title { display: flex; flex-direction: column; gap: 4px; }
+.gw2-detail-name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #c9a227;
+}
+.gw2-detail-meta { font-size: 11px; color: #4a7088; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+/* Equipment grid */
+.gw2-equip-grid {
+  display: grid;
+  padding: 18px;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    "helm       shoulders  coat     "
+    "gloves     leggings   boots    "
+    "backpack   amulet     .        "
+    "accessory1 accessory2 .        "
+    "ring1      ring2      .        "
+    "weapona1   weapona2   .        ";
+  background: #071020;
+}
+.gw2-slot-helm        { grid-area: helm; }
+.gw2-slot-shoulders   { grid-area: shoulders; }
+.gw2-slot-coat        { grid-area: coat; }
+.gw2-slot-gloves      { grid-area: gloves; }
+.gw2-slot-leggings    { grid-area: leggings; }
+.gw2-slot-boots       { grid-area: boots; }
+.gw2-slot-backpack    { grid-area: backpack; }
+.gw2-slot-amulet      { grid-area: amulet; }
+.gw2-slot-accessory1  { grid-area: accessory1; }
+.gw2-slot-accessory2  { grid-area: accessory2; }
+.gw2-slot-ring1       { grid-area: ring1; }
+.gw2-slot-ring2       { grid-area: ring2; }
+.gw2-slot-weapona1    { grid-area: weapona1; }
+.gw2-slot-weapona2    { grid-area: weapona2; }
+
+.gw2-slot {
+  background: #0a1628;
+  border: 1px solid #1a3050;
+  border-radius: 4px;
+  padding: 10px 10px 8px;
+  min-height: 60px;
+}
+.gw2-slot--empty { opacity: 0.35; }
+.gw2-slot-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #2a5070;
+  margin-bottom: 5px;
+}
+.gw2-slot-empty-text { font-size: 12px; color: #1e3a5f; }
+.gw2-item-name { font-size: 12px; font-weight: 700; line-height: 1.3; margin-bottom: 3px; }
+.gw2-item-rarity { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; }
+
+/* Item rarity colors */
+.gw2-r-junk       { color: #9d9d9d; }
+.gw2-r-basic      { color: #d0cfc8; }
+.gw2-r-fine       { color: #4E9CD6; }
+.gw2-r-masterwork { color: #67A846; }
+.gw2-r-rare       { color: #EBC135; }
+.gw2-r-exotic     { color: #C07A28; }
+.gw2-r-ascended   { color: #FB3E8D; }
+.gw2-r-legendary  { color: #864ECC; }
+
+@media (max-width: 700px) {
+  .gw2-equip-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "helm       shoulders "
+      "coat       gloves    "
+      "leggings   boots     "
+      "backpack   amulet    "
+      "accessory1 accessory2"
+      "ring1      ring2     "
+      "weapona1   weapona2  ";
+  }
+}
+
 /* ===== FOOTER ===== */
 footer { background: var(--footer-bg); border-top: 1px solid var(--border); color: var(--text-muted); font-size: 11px; text-align: center; padding: 14px; margin-top: 10px; transition: background 0.2s; }
 footer a { color: var(--text-muted); }
