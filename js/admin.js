@@ -905,9 +905,18 @@ function selectBannerFromGallery(path) {
   bannerSelectedPath = path;
   bannerPendingBase64 = null;
   bannerPendingExt = null;
+
+  const banners = Array.isArray(bannerData.banners) ? bannerData.banners : [];
+  const entry = banners.find(b => (typeof b === 'string' ? b : b.src) === path);
+  if (entry && typeof entry === 'object') {
+    if (entry.height != null) bannerData.height = entry.height;
+    if (entry.posX   != null) bannerData.posX   = entry.posX;
+    if (entry.posY   != null) bannerData.posY   = entry.posY;
+  }
+
   const zone = document.getElementById('banner-drop-zone');
   if (zone) zone.textContent = `Selected: ${path.split('/').pop()} — click "Set as Banner" to apply`;
-  updateBannerPreview();
+  syncBannerUI();
   loadBannerGallery();
 }
 
@@ -919,10 +928,11 @@ async function deleteBannerFile(path, sha) {
     {
       const { config: fresh, sha: freshSha } = await fetchBannerConfig();
       const remaining = (Array.isArray(fresh.banners) ? fresh.banners : (fresh.src ? [fresh.src] : []))
-        .filter(p => p !== path);
+        .filter(b => (typeof b === 'string' ? b : b.src) !== path);
       let updated;
       if (remaining.length > 0) {
-        updated = { ...fresh, type: 'image', src: remaining[0], banners: remaining };
+        const firstSrc = typeof remaining[0] === 'string' ? remaining[0] : remaining[0].src;
+        updated = { ...fresh, type: 'image', src: firstSrc, banners: remaining };
       } else {
         updated = { ...fresh, type: 'gradient', src: null, banners: [] };
       }
@@ -1028,27 +1038,37 @@ async function saveBanner() {
     const { config: fresh, sha: freshSha } = await fetchBannerConfig();
     let updated;
 
-    const existingBanners = Array.isArray(fresh.banners) ? [...fresh.banners]
+    const rawBanners = Array.isArray(fresh.banners) ? [...fresh.banners]
       : (fresh.src ? [fresh.src] : []);
+    const normalized = rawBanners.map(b =>
+      typeof b === 'string' ? { src: b, height: 160, posX: 50, posY: 50 } : { ...b }
+    );
+
+    const upsertEntry = (src) => {
+      const i = normalized.findIndex(b => b.src === src);
+      const entry = { src, height: h, posX: px, posY: py };
+      if (i >= 0) normalized[i] = entry; else normalized.push(entry);
+    };
 
     if (bannerPendingBase64) {
       const imgPath = `images/banners/banner-${Date.now()}.${bannerPendingExt}`;
       const imgSha = await gh.getSha(imgPath).catch(e => { throw new Error(`getSha(${imgPath}): ${e.message}`); });
       await gh.putRaw(imgPath, bannerPendingBase64, 'Upload banner image', imgSha).catch(e => { throw new Error(`upload image: ${e.message}`); });
-      if (!existingBanners.includes(imgPath)) existingBanners.push(imgPath);
-      updated = { ...fresh, type: 'image', src: imgPath, height: h, posX: px, posY: py, banners: existingBanners };
+      upsertEntry(imgPath);
+      updated = { ...fresh, type: 'image', src: imgPath, height: h, posX: px, posY: py, banners: normalized };
       bannerPendingBase64 = null;
       bannerPendingExt = null;
       const zone = document.getElementById('banner-drop-zone');
       if (zone) zone.textContent = 'Drop image here or click to browse';
     } else if (bannerSelectedPath) {
-      if (!existingBanners.includes(bannerSelectedPath)) existingBanners.push(bannerSelectedPath);
-      updated = { ...fresh, type: 'image', src: bannerSelectedPath, height: h, posX: px, posY: py, banners: existingBanners };
+      upsertEntry(bannerSelectedPath);
+      updated = { ...fresh, type: 'image', src: bannerSelectedPath, height: h, posX: px, posY: py, banners: normalized };
       bannerSelectedPath = null;
       const zone = document.getElementById('banner-drop-zone');
       if (zone) zone.textContent = 'Drop image here or click to browse';
     } else {
-      updated = { ...fresh, height: h, posX: px, posY: py };
+      if (fresh.src) upsertEntry(fresh.src);
+      updated = { ...fresh, height: h, posX: px, posY: py, banners: normalized };
     }
 
     await gh.putFile('data/banner.json', JSON.stringify(updated, null, 2), 'Update banner config', freshSha).catch(e => { throw new Error(`save config: ${e.message}`); });
