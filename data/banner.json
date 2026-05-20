@@ -4,5 +4,11 @@
   "height": 240,
   "posX": 25,
   "posY": 79,
-  "avatarSrc": "images/avatar.jpg"
+  "avatarSrc": "images/avatar.jpg",
+  "banners": [
+    "images/banners/banner.jpg",
+    "images/banners/banner-1778942665321.png",
+    "images/banners/banner-1778942705354.jpg",
+    "images/banners/banner-1778944259447.jpg"
+  ]
 }
