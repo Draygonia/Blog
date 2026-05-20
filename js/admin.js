@@ -692,10 +692,11 @@ async function addLink() {
   const url = document.getElementById('link-url').value.trim();
   const description = document.getElementById('link-desc').value.trim();
   const category = document.getElementById('link-category').value.trim();
+  const image = document.getElementById('link-image').value.trim();
 
   if (!title || !url) { showMessage('link-message', 'error', 'Title and URL are required.'); return; }
 
-  linksData.links = [...(linksData.links || []), { title, url, description, category }];
+  linksData.links = [...(linksData.links || []), { title, url, description, category, ...(image ? { image } : {}) }];
   await saveLinks('add-link-btn', 'Add Link');
 }
 

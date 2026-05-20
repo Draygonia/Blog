@@ -424,6 +424,20 @@ body.mobile-view #sidebar { width: 100%; }
 .link-card--featured:hover { border-color: #e0b830; box-shadow: 0 0 0 1px rgba(224,184,48,0.35), 0 0 14px rgba(224,184,48,0.15); }
 .link-card--featured:hover .link-card-title { color: #e0b830; }
 
+.link-card--has-bg {
+  background-image:
+    linear-gradient(135deg, rgba(15,25,35,0.91) 0%, rgba(24,35,50,0.83) 100%),
+    var(--link-bg-img);
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface);
+}
+.link-card--has-bg:hover {
+  background-image:
+    linear-gradient(135deg, rgba(18,30,45,0.84) 0%, rgba(24,35,50,0.75) 100%),
+    var(--link-bg-img);
+}
+
 /* ===== WALLET CARDS ===== */
 .wallet-card {
   background: var(--bg);
