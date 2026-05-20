@@ -1,7 +1,7 @@
 {
   "type": "image",
-  "src": "images/banners/banner-1778942705354.jpg",
-  "height": 117,
+  "src": "images/banners/banner-1778944259447.jpg",
+  "height": 238,
   "posX": 53,
   "posY": 79,
   "avatarSrc": "images/avatar.jpg",
@@ -26,9 +26,9 @@
     },
     {
       "src": "images/banners/banner-1778944259447.jpg",
-      "height": 160,
-      "posX": 50,
-      "posY": 50
+      "height": 238,
+      "posX": 53,
+      "posY": 79
     }
   ]
 }
