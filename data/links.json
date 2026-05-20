@@ -72,7 +72,8 @@
       "title": "Some More News",
       "url": "https://www.youtube.com/@SMN",
       "description": "News and commentary by Cody Johnston.",
-      "category": "Podcasts"
+      "category": "Podcasts",
+      "featured": true
     }
   ],
   "categories": [
