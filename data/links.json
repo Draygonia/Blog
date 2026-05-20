@@ -74,6 +74,13 @@
       "description": "News and commentary by Cody Johnston.",
       "category": "Podcasts",
       "featured": true
+    },
+    {
+      "title": "Hacker News",
+      "url": "https://news.ycombinator.com/",
+      "description": "Great site for tech news and discussions. Low quality posts are mercilessly downvoted.",
+      "category": "News",
+      "image": "https://news.ycombinator.com/y18.svg"
     }
   ],
   "categories": [
