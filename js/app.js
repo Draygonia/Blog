@@ -130,8 +130,16 @@ async function loadLinksGrid(containerId) {
       groups[cat].push(l);
     });
 
+    const cardBgImg = l => {
+      const src = l.image || (() => {
+        try { return `https://www.google.com/s2/favicons?domain=${new URL(l.url).hostname}&sz=256`; }
+        catch { return ''; }
+      })();
+      return src ? `style="--link-bg-img: url('${encodeURI(src)}')"` : '';
+    };
+
     const renderCard = l => `
-      <a href="${escHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="link-card${l.featured ? ' link-card--featured' : ''}">
+      <a href="${escHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="link-card link-card--has-bg${l.featured ? ' link-card--featured' : ''}" ${cardBgImg(l)}>
         <div class="link-card-title">${escHtml(l.title)}</div>
         ${l.description ? `<div class="link-card-desc">${escHtml(l.description)}</div>` : ''}
         <div class="link-card-url">${escHtml(l.url)}</div>
