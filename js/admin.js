@@ -128,6 +128,7 @@ async function loadSocials() {
     socialsSha = sha;
     renderSocialList();
     renderGameList();
+    await loadGw2Settings();
   } catch {
     socialsData = { socials: [], games: [] };
     socialsSha = null;
@@ -259,6 +260,41 @@ async function deleteGame(i) {
   if (!confirm('Remove this game?')) return;
   socialsData.games.splice(i, 1);
   await saveSocials(null, null, 'game-message');
+}
+
+async function loadGw2Settings() {
+  const input = document.getElementById('gw2-api-key-input');
+  if (!input) return;
+  try {
+    const { content } = await gh.getFile('data/games/guild-wars-2.json');
+    const data = JSON.parse(content);
+    if (data.apiKey && data.apiKey !== 'YOUR_GW2_API_KEY_HERE') {
+      input.placeholder = '(key configured — enter new key to replace)';
+    }
+  } catch { /* file may not exist yet */ }
+}
+
+async function saveGw2ApiKey() {
+  const input = document.getElementById('gw2-api-key-input');
+  const key = input ? input.value.trim() : '';
+  if (!key) { showMessage('gw2-settings-message', 'error', 'API key cannot be empty.'); return; }
+
+  const btn = document.getElementById('save-gw2-key-btn');
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+  try {
+    let existing = {};
+    try { const { content } = await gh.getFile('data/games/guild-wars-2.json'); existing = JSON.parse(content); } catch {}
+    await saveGameData('guild-wars-2', { ...existing, apiKey: key }, true);
+    showMessage('gw2-settings-message', 'success', 'GW2 API key saved!');
+    input.value = '';
+    input.placeholder = '(key configured — enter new key to replace)';
+  } catch (err) {
+    showMessage('gw2-settings-message', 'error', `Error: ${err.message}`);
+  } finally {
+    btn.textContent = 'Save API Key';
+    btn.disabled = false;
+  }
 }
 
 // ---- Game character management ----

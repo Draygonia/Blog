@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="215" viewBox="0 0 460 215">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#0d1a2e"/>
+      <stop offset="55%" stop-color="#060e1c"/>
+      <stop offset="100%" stop-color="#020508"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="38%" r="45%">
+      <stop offset="0%" stop-color="#1a3a6b" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#1a3a6b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="goldglow" cx="50%" cy="38%" r="25%">
+      <stop offset="0%" stop-color="#c9a227" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#c9a227" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="460" height="215" fill="url(#bg)"/>
+  <rect width="460" height="215" fill="url(#glow)"/>
+  <rect width="460" height="215" fill="url(#goldglow)"/>
+
+  <!-- Dragon Eye / Sigil outer ring -->
+  <circle cx="230" cy="88" r="58" fill="none" stroke="#1e3d6e" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="230" cy="88" r="50" fill="none" stroke="#2a5090" stroke-width="0.8" opacity="0.4"/>
+  <circle cx="230" cy="88" r="30" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.3"/>
+
+  <!-- GW2 Dragon wing motif - simplified geometric -->
+  <!-- Left wing sweep -->
+  <path d="M230,88 L175,50 L165,88 L190,105 Z" fill="#1a3a6b" opacity="0.35" stroke="#2a5090" stroke-width="0.8"/>
+  <!-- Right wing sweep -->
+  <path d="M230,88 L285,50 L295,88 L270,105 Z" fill="#1a3a6b" opacity="0.35" stroke="#2a5090" stroke-width="0.8"/>
+
+  <!-- Central diamond / eye -->
+  <polygon points="230,68 245,88 230,108 215,88" fill="#0d1a2e" stroke="#c9a227" stroke-width="1.2" opacity="0.6"/>
+  <circle cx="230" cy="88" r="5" fill="#c9a227" opacity="0.55"/>
+
+  <!-- Decorative rune dots on ring -->
+  <circle cx="230" cy="30" r="2" fill="#c9a227" opacity="0.5"/>
+  <circle cx="284" cy="61" r="2" fill="#c9a227" opacity="0.5"/>
+  <circle cx="263" cy="137" r="2" fill="#c9a227" opacity="0.5"/>
+  <circle cx="197" cy="137" r="2" fill="#c9a227" opacity="0.5"/>
+  <circle cx="176" cy="61" r="2" fill="#c9a227" opacity="0.5"/>
+
+  <!-- Subtle horizon glow -->
+  <ellipse cx="230" cy="195" rx="140" ry="10" fill="#1a3a6b" opacity="0.15"/>
+
+  <!-- Game title -->
+  <text x="230" y="156" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="bold"
+        fill="#8ab4e0" text-anchor="middle" letter-spacing="5" opacity="0.9">GUILD WARS 2</text>
+  <text x="230" y="175" font-family="Georgia, 'Times New Roman', serif" font-size="9.5" font-weight="normal"
+        fill="#c9a227" text-anchor="middle" letter-spacing="4" opacity="0.75">VISIONS OF ETERNITY</text>
+
+  <!-- Border -->
+  <rect width="460" height="215" fill="none" stroke="#1e3d6e" stroke-width="2" opacity="0.3"/>
+</svg>

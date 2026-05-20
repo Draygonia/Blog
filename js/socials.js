@@ -64,11 +64,18 @@ async function loadSocialsPage(containerId) {
         <div class="socials-section">
           <div class="socials-section-header">Games</div>
           <div class="games-grid">
-            ${games.map(g => `
-              <a href="game.html?id=${encodeURIComponent(g.id)}" class="game-card">
-                <div class="game-card-title">${escHtml(g.title)}</div>
-                <div class="game-card-arrow">View &rsaquo;</div>
-              </a>`).join('')}
+            ${games.map(g => {
+              const logoUrl = g.logo ? rawUrl(g.logo) : '';
+              const logoClass = logoUrl ? ' game-card--has-logo' : '';
+              const logoStyle = logoUrl ? ` style="--game-logo-img: url('${encodeURI(logoUrl)}')"` : '';
+              return `
+              <a href="game.html?id=${encodeURIComponent(g.id)}" class="game-card${logoClass}"${logoStyle}>
+                <div class="game-card-body">
+                  <div class="game-card-title">${escHtml(g.title)}</div>
+                  <div class="game-card-arrow">View &rsaquo;</div>
+                </div>
+              </a>`;
+            }).join('')}
           </div>
         </div>`);
     }
