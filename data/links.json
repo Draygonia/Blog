@@ -22,7 +22,8 @@
       "title": "Darknet Diaries",
       "url": "https://darknetdiaries.com",
       "description": "True stories from the dark side of the internet.",
-      "category": "Podcasts"
+      "category": "Podcasts",
+      "featured": true
     },
     {
       "title": "The Biggest Problem in the Universe",
