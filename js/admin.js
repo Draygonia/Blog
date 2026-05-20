@@ -5,6 +5,29 @@ let postsManifest = { posts: [] };
 let linksData = { links: [] };
 let linksSha = null;
 let editingPost = null;
+let quillEditor = null;
+
+function initQuill() {
+  if (quillEditor) return;
+  quillEditor = new Quill('#post-content-editor', {
+    theme: 'snow',
+    placeholder: 'Write your post here…',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        [{ font: [] }],
+        [{ size: ['small', false, 'large', 'huge'] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ color: [] }, { background: [] }],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ align: [] }],
+        ['blockquote', 'code-block'],
+        ['link', 'image'],
+        ['clean']
+      ]
+    }
+  });
+}
 
 function init() {
   if (token) {
@@ -13,6 +36,7 @@ function init() {
     showAuth();
   }
   initPostDrop();
+  initQuill();
 }
 
 // ---- Post image drop zone ----
@@ -56,13 +80,16 @@ async function handlePostFile(file) {
       const sha = await gh.getSha(imgPath);
       await gh.putRaw(imgPath, base64, `Upload: ${safeName}`, sha);
 
-      const textarea = document.getElementById('post-content');
       const isImage = file.type.startsWith('image/');
-      const md = isImage ? `\n![${file.name}](/images/posts/${safeName})\n` : `\n[${file.name}](/images/posts/${safeName})\n`;
-      const pos = textarea.selectionStart ?? textarea.value.length;
-      textarea.value = textarea.value.slice(0, pos) + md + textarea.value.slice(pos);
-      textarea.selectionStart = textarea.selectionEnd = pos + md.length;
-      textarea.focus();
+      const insertPos = quillEditor.getLength() - 1;
+      if (isImage) {
+        quillEditor.insertEmbed(insertPos, 'image', `/images/posts/${safeName}`);
+        quillEditor.setSelection(insertPos + 1);
+      } else {
+        quillEditor.insertText(insertPos, file.name, 'link', `/images/posts/${safeName}`);
+        quillEditor.setSelection(insertPos + file.name.length);
+      }
+      quillEditor.focus();
 
       zone.textContent = '📷 Drop image or file to attach';
       showMessage('post-img-message', 'success', `Inserted: /images/posts/${safeName}`);
@@ -525,7 +552,8 @@ async function startEditPost(index) {
     document.getElementById('post-title').value = data.title || '';
     document.getElementById('post-tags').value = data.tags || '';
     document.getElementById('post-excerpt').value = data.excerpt || '';
-    document.getElementById('post-content').value = body;
+    const isHtml = /^\s*</.test(body);
+    quillEditor.clipboard.dangerouslyPasteHTML(isHtml ? body : marked.parse(body));
     document.getElementById('post-form-title').textContent = 'Edit Post';
     document.getElementById('cancel-edit-btn').style.display = '';
     document.getElementById('save-post-btn').textContent = 'Update';
@@ -540,6 +568,7 @@ async function startEditPost(index) {
 function cancelEditPost() {
   editingPost = null;
   document.getElementById('post-form').reset();
+  quillEditor.setContents([]);
   document.getElementById('post-form-title').textContent = 'New Post';
   document.getElementById('cancel-edit-btn').style.display = 'none';
   document.getElementById('save-post-btn').textContent = 'Publish';
@@ -549,9 +578,10 @@ async function savePost() {
   const title = document.getElementById('post-title').value.trim();
   const tags = document.getElementById('post-tags').value.trim();
   const excerpt = document.getElementById('post-excerpt').value.trim();
-  const content = document.getElementById('post-content').value.trim();
+  const content = quillEditor.root.innerHTML.trim();
 
   if (!title) { showMessage('post-message', 'error', 'Title is required.'); return; }
+  if (!quillEditor.getText().trim()) { showMessage('post-message', 'error', 'Content is required.'); return; }
 
   const date = editingPost ? editingPost.filename.slice(0, 10) : today();
   const lines = ['---', `title: ${title}`, `date: ${date}`];

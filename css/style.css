@@ -1217,3 +1217,82 @@ footer a:hover { color: var(--text); }
   #site-search { max-width: 140px; }
   #site-banner { max-height: 40vw; }
 }
+
+/* ===== QUILL RICH TEXT EDITOR ===== */
+.ql-toolbar.ql-snow {
+  background: var(--surface);
+  border: 1px solid var(--border) !important;
+  border-bottom: none !important;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 6px 8px;
+}
+.ql-container.ql-snow {
+  background: var(--bg);
+  border: 1px solid var(--border) !important;
+  border-radius: 0 0 var(--radius) var(--radius);
+  font-family: var(--font);
+  font-size: 13px;
+  min-height: 260px;
+}
+.ql-editor {
+  color: var(--text);
+  min-height: 260px;
+  line-height: 1.6;
+}
+.ql-editor.ql-blank::before {
+  color: var(--text-muted);
+  font-style: normal;
+}
+.ql-snow .ql-stroke {
+  stroke: var(--text-muted) !important;
+}
+.ql-snow .ql-fill,
+.ql-snow .ql-stroke.ql-fill {
+  fill: var(--text-muted) !important;
+}
+.ql-snow .ql-picker {
+  color: var(--text-muted);
+}
+.ql-snow .ql-picker-options {
+  background: var(--surface);
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius);
+}
+.ql-snow .ql-picker-item {
+  color: var(--text);
+}
+.ql-snow .ql-picker-item:hover,
+.ql-snow .ql-picker-label:hover {
+  color: var(--accent) !important;
+}
+.ql-toolbar.ql-snow button:hover .ql-stroke,
+.ql-toolbar.ql-snow button.ql-active .ql-stroke {
+  stroke: var(--accent) !important;
+}
+.ql-toolbar.ql-snow button:hover .ql-fill,
+.ql-toolbar.ql-snow button.ql-active .ql-fill {
+  fill: var(--accent) !important;
+}
+.ql-toolbar.ql-snow .ql-picker-label:hover,
+.ql-toolbar.ql-snow .ql-picker-label.ql-active {
+  color: var(--accent) !important;
+}
+.ql-toolbar.ql-snow .ql-picker-label:hover .ql-stroke,
+.ql-toolbar.ql-snow .ql-picker-label.ql-active .ql-stroke {
+  stroke: var(--accent) !important;
+}
+.ql-snow.ql-toolbar button:focus { outline: none; }
+.ql-editor h1, .ql-editor h2, .ql-editor h3,
+.ql-editor h4, .ql-editor h5, .ql-editor h6 { color: var(--text); }
+.ql-editor a { color: var(--link); }
+.ql-editor blockquote {
+  border-left: 3px solid var(--accent);
+  color: var(--text-muted);
+  padding-left: 12px;
+  margin: 8px 0;
+}
+.ql-editor code, .ql-editor pre {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius);
+}
