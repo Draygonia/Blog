@@ -120,6 +120,24 @@ function toggleMobileView() {
 
 function initTheme() {
   const savedTheme = localStorage.getItem('theme-name');
+
+  const headerInner = document.getElementById('site-header-inner');
+  if (headerInner && !document.getElementById('header-theme')) {
+    const container = document.createElement('div');
+    container.id = 'header-theme';
+    const colors = { orange: '#e07a10', red: '#cc3020', green: '#2ea840', silver: '#c0ccd8', dark: '#1a1a2a', purple: '#8a30c8' };
+    Object.entries(colors).forEach(([name, bg]) => {
+      const sw = document.createElement('div');
+      sw.className = 'swatch';
+      sw.style.background = bg;
+      sw.dataset.theme = name;
+      sw.title = name.charAt(0).toUpperCase() + name.slice(1);
+      sw.onclick = () => applyTheme(name);
+      container.appendChild(sw);
+    });
+    headerInner.appendChild(container);
+  }
+
   if (savedTheme && THEMES[savedTheme]) applyTheme(savedTheme);
 
   const savedBannerId = localStorage.getItem('banner-id');

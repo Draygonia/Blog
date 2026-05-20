@@ -92,6 +92,18 @@ a:hover { color: var(--link-hover); }
 }
 #site-search::placeholder { color: var(--text-muted); }
 #site-search:focus { border-color: var(--accent); }
+#header-theme {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+#header-theme .swatch {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 0;
+}
 
 /* ===== ADMIN BAR ===== */
 #admin-bar {

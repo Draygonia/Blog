@@ -17,7 +17,9 @@ async function loadRepoBanner() {
       const prev = parseInt(localStorage.getItem('banner-img-idx') || '-1');
       const idx = (prev + 1) % banners.length;
       localStorage.setItem('banner-img-idx', String(idx));
-      applyBannerConfig({ ...cfg, type: 'image', src: banners[idx] });
+      const item = banners[idx];
+      const overrides = typeof item === 'string' ? { src: item } : item;
+      applyBannerConfig({ ...cfg, type: 'image', ...overrides });
     } else {
       startBannerCycle(10000);
     }
