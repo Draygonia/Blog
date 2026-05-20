@@ -10,7 +10,8 @@
       "title": "The Last Podcast on the Left",
       "url": "https://www.lastpodcastontheleft.com",
       "description": "Comedy horror podcast covering true crime, cults, and the paranormal.",
-      "category": "Podcasts"
+      "category": "Podcasts",
+      "featured": true
     },
     {
       "title": "The Dick Show",
