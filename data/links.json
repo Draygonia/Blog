@@ -81,6 +81,13 @@
       "description": "Great site for tech news and discussions. Low quality posts are mercilessly downvoted.",
       "category": "News",
       "image": "https://news.ycombinator.com/y18.svg"
+    },
+    {
+      "title": "Hackaday",
+      "url": "https://hackaday.com/",
+      "description": "Tech blog with great info and fun projects.",
+      "category": "News",
+      "image": "https://hackaday.com/wp-content/themes/hackaday-2/img/logo.png"
     }
   ],
   "categories": [
