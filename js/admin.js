@@ -128,7 +128,6 @@ async function loadSocials() {
     socialsSha = sha;
     renderSocialList();
     renderGameList();
-    await loadGw2Settings();
   } catch {
     socialsData = { socials: [], games: [] };
     socialsSha = null;
@@ -224,21 +223,41 @@ function renderGameList() {
     listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;margin-bottom:8px">No games yet.</p>';
     return;
   }
-  listEl.innerHTML = games.map((g, i) => `
-    <div class="admin-list-item" id="game-row-${i}">
-      <div class="admin-list-item-info">
-        <div class="admin-list-item-title">${escHtml(g.title)}</div>
-        <div class="admin-list-item-meta">game.html?id=${escHtml(g.id)}</div>
+  listEl.innerHTML = games.map((g, i) => {
+    const isGw2 = g.id === 'guild-wars-2';
+    const actionBtn = isGw2
+      ? `<button class="btn btn-secondary btn-sm" onclick="toggleGw2Api(${i})">API &rsaquo;</button>`
+      : `<button class="btn btn-secondary btn-sm" onclick="toggleGameChars('${escHtml(g.id)}', ${i})">Characters &rsaquo;</button>`;
+    const panel = isGw2
+      ? `<div id="game-chars-${i}" style="display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);background:var(--bg);padding:12px;margin-bottom:4px">
+          <div id="gw2-settings-message" style="display:none"></div>
+          <div class="form-group" style="margin-bottom:8px">
+            <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:4px;display:block">API Key</label>
+            <input type="text" id="gw2-api-key-input" placeholder="Paste your GW2 API key here"
+              style="width:100%;box-sizing:border-box;padding:5px 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:11px;font-family:'Courier New',monospace;outline:none" />
+          </div>
+          <p style="font-size:11px;color:var(--text-muted);margin-bottom:10px">
+            Generate at <a href="https://account.arena.net/applications" target="_blank" rel="noopener" style="color:var(--link)">account.arena.net/applications</a>
+            with <em>characters</em> scope.
+          </p>
+          <button type="button" id="save-gw2-key-btn" class="btn btn-primary btn-sm" onclick="saveGw2ApiKey()">Save API Key</button>
+        </div>`
+      : `<div id="game-chars-${i}" style="display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);background:var(--bg);padding:12px;margin-bottom:4px">
+          <div id="game-chars-inner-${i}"><div class="loading"><div class="spinner"></div> Loading…</div></div>
+        </div>`;
+    return `
+      <div class="admin-list-item" id="game-row-${i}">
+        <div class="admin-list-item-info">
+          <div class="admin-list-item-title">${escHtml(g.title)}</div>
+          <div class="admin-list-item-meta">game.html?id=${escHtml(g.id)}</div>
+        </div>
+        <div class="admin-list-item-actions">
+          ${actionBtn}
+          <button class="btn btn-danger btn-sm" onclick="deleteGame(${i})">Delete</button>
+        </div>
       </div>
-      <div class="admin-list-item-actions">
-        <button class="btn btn-secondary btn-sm" onclick="toggleGameChars('${escHtml(g.id)}', ${i})">Characters &rsaquo;</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteGame(${i})">Delete</button>
-      </div>
-    </div>
-    <div id="game-chars-${i}" style="display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);background:var(--bg);padding:12px;margin-bottom:4px">
-      <div id="game-chars-inner-${i}"><div class="loading"><div class="spinner"></div> Loading…</div></div>
-    </div>
-  `).join('');
+      ${panel}`;
+  }).join('');
 }
 
 async function addGame() {
@@ -260,6 +279,14 @@ async function deleteGame(i) {
   if (!confirm('Remove this game?')) return;
   socialsData.games.splice(i, 1);
   await saveSocials(null, null, 'game-message');
+}
+
+async function toggleGw2Api(rowIdx) {
+  const panel = document.getElementById(`game-chars-${rowIdx}`);
+  if (!panel) return;
+  if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+  panel.style.display = '';
+  await loadGw2Settings();
 }
 
 async function loadGw2Settings() {
