@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="215" viewBox="0 0 460 215">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#3d0000"/>
+      <stop offset="60%" stop-color="#1a0000"/>
+      <stop offset="100%" stop-color="#080000"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="40%">
+      <stop offset="0%" stop-color="#8b0000" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#8b0000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="460" height="215" fill="url(#bg)"/>
+  <rect width="460" height="215" fill="url(#glow)"/>
+
+  <!-- Pentagram circle -->
+  <circle cx="230" cy="95" r="62" fill="none" stroke="#6b0000" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="230" cy="95" r="55" fill="none" stroke="#4a0000" stroke-width="0.8" opacity="0.6"/>
+
+  <!-- Pentagon star (pentagram) points: top, top-right, bottom-right, bottom-left, top-left -->
+  <!-- Pentagram inscribed in radius 55 circle centered at 230,95 -->
+  <polygon points="230,40 262,130 175,75 285,75 198,130" fill="none" stroke="#8b0000" stroke-width="1.2" opacity="0.45"/>
+
+  <!-- Inner rune details -->
+  <circle cx="230" cy="95" r="6" fill="#6b0000" opacity="0.7"/>
+  <line x1="230" y1="40" x2="230" y2="89" stroke="#6b0000" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- Flame wisps -->
+  <ellipse cx="230" cy="175" rx="90" ry="8" fill="#6b0000" opacity="0.12"/>
+  <ellipse cx="230" cy="178" rx="55" ry="5" fill="#8b0000" opacity="0.1"/>
+
+  <!-- Game title text -->
+  <text x="230" y="162" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="bold"
+        fill="#cc2200" text-anchor="middle" letter-spacing="4" opacity="0.9">DIABLO II</text>
+  <text x="230" y="182" font-family="Georgia, 'Times New Roman', serif" font-size="11" font-weight="normal"
+        fill="#994400" text-anchor="middle" letter-spacing="6" opacity="0.7">RESURRECTED</text>
+
+  <!-- Subtle vignette border -->
+  <rect width="460" height="215" fill="none" stroke="#6b0000" stroke-width="2" opacity="0.2"/>
+</svg>

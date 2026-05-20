@@ -94,11 +94,13 @@
   "games": [
     {
       "id": "diablo-2-resurrected",
-      "title": "Diablo 2 Resurrected"
+      "title": "Diablo 2 Resurrected",
+      "logo": "images/games/diablo-2-resurrected.svg"
     },
     {
       "id": "guild-wars-2",
-      "title": "Guild Wars 2"
+      "title": "Guild Wars 2",
+      "logo": "images/games/guild-wars-2.svg"
     }
   ]
 }
