@@ -88,6 +88,12 @@
       "description": "Tech blog with great info and fun projects.",
       "category": "News",
       "image": "https://hackaday.com/wp-content/themes/hackaday-2/img/logo.png"
+    },
+    {
+      "title": "Overkill.wtf",
+      "url": "https://overkill.wtf/",
+      "description": "Gaming blog by a dedicated techie. Good reads.",
+      "category": "News"
     }
   ],
   "categories": [
