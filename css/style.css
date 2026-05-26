@@ -1238,6 +1238,16 @@ footer a:hover { color: var(--text); }
   #sidebar { width: 100%; }
   #site-search { max-width: 140px; }
   #site-banner { max-height: 40vw; }
+  #site-header-inner {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 6px 0;
+  }
+  #header-theme {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
 }
 
 /* ===== QUILL RICH TEXT EDITOR ===== */
