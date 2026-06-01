@@ -94,11 +94,134 @@
       "url": "https://overkill.wtf/",
       "description": "Gaming blog by a dedicated techie. Good reads.",
       "category": "News"
+    },
+    {
+      "title": "Technology Connections",
+      "url": "https://www.youtube.com/@TechnologyConnections",
+      "description": "Deep dives into how everyday technology works.",
+      "category": "YouTube",
+      "featured": true
+    },
+    {
+      "title": "Cracked",
+      "url": "https://www.youtube.com/@cracked",
+      "description": "Comedy and pop culture commentary from Cracked.com.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Flashgitz",
+      "url": "https://www.youtube.com/@Flashgitz",
+      "description": "Crude animated comedy shorts.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Explosm Entertainment",
+      "url": "https://www.youtube.com/@ExplosmEntertainment",
+      "description": "Creators of Cyanide & Happiness.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Games Done Quick",
+      "url": "https://www.youtube.com/@GamesDoneQuick",
+      "description": "Charity speedrunning marathon events.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Gaming Historian",
+      "url": "https://www.youtube.com/@GamingHistorian",
+      "description": "Documentary-style deep dives into video game history.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Summoning Salt",
+      "url": "https://www.youtube.com/@SummoningSalt",
+      "description": "Cinematic histories of video game world records.",
+      "category": "YouTube"
+    },
+    {
+      "title": "GGmanlives",
+      "url": "https://www.youtube.com/@GGmanlives",
+      "description": "Honest, no-nonsense FPS and shooter game reviews.",
+      "category": "YouTube"
+    },
+    {
+      "title": "TheOdd1sOut",
+      "url": "https://www.youtube.com/@theodd1sout",
+      "description": "Animated storytime and comedy by James Rallison.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Jaiden Animations",
+      "url": "https://www.youtube.com/@JaidenAnimations",
+      "description": "Animated personal stories and life experiences.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Kurzgesagt",
+      "url": "https://www.youtube.com/@kurzgesagt",
+      "description": "Beautifully animated explainers on science, space, and existential topics.",
+      "category": "YouTube",
+      "featured": true
+    },
+    {
+      "title": "LGR",
+      "url": "https://www.youtube.com/@LGR",
+      "description": "Retro tech and vintage computer reviews by Clint Basinger.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Larry Bundy Jr",
+      "url": "https://www.youtube.com/@LarryBundyJr",
+      "description": "Gaming trivia, forgotten facts, and retro gaming history.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Meatcanyon",
+      "url": "https://www.youtube.com/@meatcanyon",
+      "description": "Disturbing animated parodies of pop culture icons.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Nostalgia Nerd",
+      "url": "https://www.youtube.com/@NostalgiaNerd",
+      "description": "Retro tech, computing history, and nostalgic deep dives.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Techmoan",
+      "url": "https://www.youtube.com/@Techmoan",
+      "description": "Vintage and obscure audio/video technology reviews.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Film Theory",
+      "url": "https://www.youtube.com/@FilmTheory",
+      "description": "Deep analytical theories about movies and TV shows.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Game Theory",
+      "url": "https://www.youtube.com/@GameTheory",
+      "description": "Deep analytical theories about video games by MatPat.",
+      "category": "YouTube"
+    },
+    {
+      "title": "The Mysterious Mr. Enter",
+      "url": "https://www.youtube.com/@TheMysteriousMrEnter",
+      "description": "Animation reviews and commentary on cartoons.",
+      "category": "YouTube"
+    },
+    {
+      "title": "Turkey Tom",
+      "url": "https://www.youtube.com/@TurkeyTom",
+      "description": "Internet culture commentary and drama breakdowns.",
+      "category": "YouTube"
     }
   ],
   "categories": [
     "Podcasts",
     "3D Printing",
-    "News"
+    "News",
+    "YouTube"
   ]
 }
