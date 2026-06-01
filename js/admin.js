@@ -709,6 +709,55 @@ async function loadLinks() {
   }
 }
 
+const ICON_TRASH = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+const ICON_EDIT  = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+
+function linkItemHtml(l, i) {
+  const cats = linksData.categories || [];
+  const catOptions = '<option value="">-- None --</option>' + cats.map(c => `<option value="${escHtml(c)}"${c === (l.category || '') ? ' selected' : ''}>${escHtml(c)}</option>`).join('');
+  const inputStyle = 'width:100%;padding:5px 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;font-family:var(--font);outline:none;box-sizing:border-box';
+  return `
+    <div class="admin-list-item" id="link-row-${i}">
+      <div class="admin-list-item-info">
+        <div class="admin-list-item-title">${escHtml(l.title)}</div>
+        <div class="admin-list-item-meta">${escHtml(l.url)}${l.description ? ` &middot; ${escHtml(l.description)}` : ''}</div>
+      </div>
+      <div class="admin-list-item-actions">
+        <button class="btn btn-star btn-sm${l.featured ? ' active' : ''}" onclick="toggleFeatured(${i})" title="${l.featured ? 'Remove from featured' : 'Mark as featured'}">&#9733;</button>
+        <button class="btn btn-secondary btn-icon btn-sm" onclick="startEditLink(${i})" title="Edit">${ICON_EDIT}</button>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="deleteLink(${i})" title="Delete">${ICON_TRASH}</button>
+      </div>
+    </div>
+    <div id="link-edit-${i}" style="display:none;padding:8px 12px 10px;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);background:var(--bg);margin-bottom:4px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-bottom:6px">
+        <div>
+          <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:2px">Title</label>
+          <input type="text" id="link-edit-title-${i}" value="${escHtml(l.title)}" style="${inputStyle}">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:2px">Category</label>
+          <select id="link-edit-category-${i}" style="${inputStyle}">${catOptions}</select>
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:2px">URL</label>
+          <input type="url" id="link-edit-url-${i}" value="${escHtml(l.url)}" style="${inputStyle}">
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:2px">Description</label>
+          <input type="text" id="link-edit-desc-${i}" value="${escHtml(l.description || '')}" style="${inputStyle}">
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:2px">Image URL <span style="font-weight:400">(optional)</span></label>
+          <input type="url" id="link-edit-image-${i}" value="${escHtml(l.image || '')}" style="${inputStyle}">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" onclick="saveEditLink(${i})">Save</button>
+        <button class="btn btn-secondary btn-sm" onclick="cancelEditLink(${i})">Cancel</button>
+      </div>
+    </div>`;
+}
+
 function renderLinkList() {
   const listEl = document.getElementById('link-list');
   if (!linksData.links || linksData.links.length === 0) {
@@ -717,7 +766,6 @@ function renderLinkList() {
     return;
   }
 
-  // Group links by category
   const grouped = {};
   linksData.links.forEach((l, i) => {
     const cat = l.category || '';
@@ -725,75 +773,49 @@ function renderLinkList() {
     grouped[cat].push({ link: l, index: i });
   });
 
-  // Render categories in order: named categories first (sorted), then uncategorized
   const cats = linksData.categories || [];
   const namedCats = cats.filter(c => grouped[c]);
   const uncategorized = grouped[''] || [];
+  const knownCats = new Set(['', ...cats]);
+  const orphanCats = Object.keys(grouped).filter(c => c && !knownCats.has(c));
 
   let html = '';
 
-  namedCats.forEach(cat => {
-    html += `<div class="link-category-group">
-      <div class="link-category-header">${escHtml(cat)}</div>`;
-    grouped[cat].forEach(({ link: l, index: i }) => {
-      html += `
-      <div class="admin-list-item">
-        <div class="admin-list-item-info">
-          <div class="admin-list-item-title">${escHtml(l.title)}</div>
-          <div class="admin-list-item-meta">${escHtml(l.url)}${l.description ? ` &middot; ${escHtml(l.description)}` : ''}</div>
-        </div>
-        <div class="admin-list-item-actions">
-          <button class="btn btn-star btn-sm${l.featured ? ' active' : ''}" onclick="toggleFeatured(${i})" title="${l.featured ? 'Remove from featured' : 'Mark as featured'}">&#9733;</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-  });
-
-  // Also render links with categories not in the categories list
-  const knownCats = new Set(['', ...cats]);
-  const orphanCats = Object.keys(grouped).filter(c => c && !knownCats.has(c));
-  orphanCats.forEach(cat => {
-    html += `<div class="link-category-group">
-      <div class="link-category-header">${escHtml(cat)}</div>`;
-    grouped[cat].forEach(({ link: l, index: i }) => {
-      html += `
-      <div class="admin-list-item">
-        <div class="admin-list-item-info">
-          <div class="admin-list-item-title">${escHtml(l.title)}</div>
-          <div class="admin-list-item-meta">${escHtml(l.url)}${l.description ? ` &middot; ${escHtml(l.description)}` : ''}</div>
-        </div>
-        <div class="admin-list-item-actions">
-          <button class="btn btn-star btn-sm${l.featured ? ' active' : ''}" onclick="toggleFeatured(${i})" title="${l.featured ? 'Remove from featured' : 'Mark as featured'}">&#9733;</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
-        </div>
-      </div>`;
-    });
+  [...namedCats, ...orphanCats].forEach(cat => {
+    html += `<div class="link-category-group"><div class="link-category-header">${escHtml(cat)}</div>`;
+    grouped[cat].forEach(({ link: l, index: i }) => { html += linkItemHtml(l, i); });
     html += `</div>`;
   });
 
   if (uncategorized.length > 0) {
-    html += `<div class="link-category-group">
-      <div class="link-category-header" style="color:var(--text-muted)">Uncategorized</div>`;
-    uncategorized.forEach(({ link: l, index: i }) => {
-      html += `
-      <div class="admin-list-item">
-        <div class="admin-list-item-info">
-          <div class="admin-list-item-title">${escHtml(l.title)}</div>
-          <div class="admin-list-item-meta">${escHtml(l.url)}${l.description ? ` &middot; ${escHtml(l.description)}` : ''}</div>
-        </div>
-        <div class="admin-list-item-actions">
-          <button class="btn btn-star btn-sm${l.featured ? ' active' : ''}" onclick="toggleFeatured(${i})" title="${l.featured ? 'Remove from featured' : 'Mark as featured'}">&#9733;</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
-        </div>
-      </div>`;
-    });
+    html += `<div class="link-category-group"><div class="link-category-header" style="color:var(--text-muted)">Uncategorized</div>`;
+    uncategorized.forEach(({ link: l, index: i }) => { html += linkItemHtml(l, i); });
     html += `</div>`;
   }
 
   listEl.innerHTML = html;
   renderCategoryList();
+}
+
+function startEditLink(i) {
+  document.getElementById(`link-edit-${i}`).style.display = '';
+  document.getElementById(`link-edit-title-${i}`).focus();
+}
+
+function cancelEditLink(i) {
+  document.getElementById(`link-edit-${i}`).style.display = 'none';
+}
+
+async function saveEditLink(i) {
+  const title = document.getElementById(`link-edit-title-${i}`).value.trim();
+  const url   = document.getElementById(`link-edit-url-${i}`).value.trim();
+  const desc  = document.getElementById(`link-edit-desc-${i}`).value.trim();
+  const cat   = document.getElementById(`link-edit-category-${i}`).value;
+  const image = document.getElementById(`link-edit-image-${i}`).value.trim();
+  if (!title || !url) { showMessage('link-message', 'error', 'Title and URL are required.'); return; }
+  linksData.links[i] = { ...linksData.links[i], title, url, description: desc, category: cat, ...(image ? { image } : {}) };
+  if (!image) delete linksData.links[i].image;
+  await saveLinks(null, null);
 }
 
 function renderCategoryList() {

@@ -582,6 +582,7 @@ body.mobile-view #sidebar { width: 100%; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 .section-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+.btn-icon { padding: 4px 6px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
 .link-category-group { margin-bottom: 16px; }
 .link-category-header { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; padding: 4px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
 .admin-list { list-style: none; margin-bottom: 16px; }
