@@ -713,20 +713,86 @@ function renderLinkList() {
   const listEl = document.getElementById('link-list');
   if (!linksData.links || linksData.links.length === 0) {
     listEl.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">No links yet.</p>';
-  } else {
-    listEl.innerHTML = linksData.links.map((l, i) => `
+    renderCategoryList();
+    return;
+  }
+
+  // Group links by category
+  const grouped = {};
+  linksData.links.forEach((l, i) => {
+    const cat = l.category || '';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push({ link: l, index: i });
+  });
+
+  // Render categories in order: named categories first (sorted), then uncategorized
+  const cats = linksData.categories || [];
+  const namedCats = cats.filter(c => grouped[c]);
+  const uncategorized = grouped[''] || [];
+
+  let html = '';
+
+  namedCats.forEach(cat => {
+    html += `<div class="link-category-group">
+      <div class="link-category-header">${escHtml(cat)}</div>`;
+    grouped[cat].forEach(({ link: l, index: i }) => {
+      html += `
       <div class="admin-list-item">
         <div class="admin-list-item-info">
           <div class="admin-list-item-title">${escHtml(l.title)}</div>
-          <div class="admin-list-item-meta">${escHtml(l.url)}${l.category ? ` &middot; ${escHtml(l.category)}` : ''}</div>
+          <div class="admin-list-item-meta">${escHtml(l.url)}${l.description ? ` &middot; ${escHtml(l.description)}` : ''}</div>
         </div>
         <div class="admin-list-item-actions">
           <button class="btn btn-star btn-sm${l.featured ? ' active' : ''}" onclick="toggleFeatured(${i})" title="${l.featured ? 'Remove from featured' : 'Mark as featured'}">&#9733;</button>
           <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  // Also render links with categories not in the categories list
+  const knownCats = new Set(['', ...cats]);
+  const orphanCats = Object.keys(grouped).filter(c => c && !knownCats.has(c));
+  orphanCats.forEach(cat => {
+    html += `<div class="link-category-group">
+      <div class="link-category-header">${escHtml(cat)}</div>`;
+    grouped[cat].forEach(({ link: l, index: i }) => {
+      html += `
+      <div class="admin-list-item">
+        <div class="admin-list-item-info">
+          <div class="admin-list-item-title">${escHtml(l.title)}</div>
+          <div class="admin-list-item-meta">${escHtml(l.url)}${l.description ? ` &middot; ${escHtml(l.description)}` : ''}</div>
+        </div>
+        <div class="admin-list-item-actions">
+          <button class="btn btn-star btn-sm${l.featured ? ' active' : ''}" onclick="toggleFeatured(${i})" title="${l.featured ? 'Remove from featured' : 'Mark as featured'}">&#9733;</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  if (uncategorized.length > 0) {
+    html += `<div class="link-category-group">
+      <div class="link-category-header" style="color:var(--text-muted)">Uncategorized</div>`;
+    uncategorized.forEach(({ link: l, index: i }) => {
+      html += `
+      <div class="admin-list-item">
+        <div class="admin-list-item-info">
+          <div class="admin-list-item-title">${escHtml(l.title)}</div>
+          <div class="admin-list-item-meta">${escHtml(l.url)}${l.description ? ` &middot; ${escHtml(l.description)}` : ''}</div>
+        </div>
+        <div class="admin-list-item-actions">
+          <button class="btn btn-star btn-sm${l.featured ? ' active' : ''}" onclick="toggleFeatured(${i})" title="${l.featured ? 'Remove from featured' : 'Mark as featured'}">&#9733;</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteLink(${i})">Delete</button>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
   }
+
+  listEl.innerHTML = html;
   renderCategoryList();
 }
 
