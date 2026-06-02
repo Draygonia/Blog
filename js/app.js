@@ -132,7 +132,13 @@ async function loadLinksGrid(containerId) {
 
     const cardBgImg = l => {
       const src = l.image || (() => {
-        try { return `https://www.google.com/s2/favicons?domain=${new URL(l.url).hostname}&sz=256`; }
+        try {
+          const u = new URL(l.url);
+          const ytHandle = (u.hostname === 'www.youtube.com' || u.hostname === 'youtube.com')
+            && u.pathname.match(/^\/@([\w-]+)/);
+          if (ytHandle) return `https://unavatar.io/youtube/${ytHandle[1]}`;
+          return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=256`;
+        }
         catch { return ''; }
       })();
       return src ? `style="--link-bg-img: url('${encodeURI(src)}')"` : '';
