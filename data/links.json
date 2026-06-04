@@ -119,7 +119,8 @@
       "title": "Explosm Entertainment",
       "url": "https://www.youtube.com/@ExplosmEntertainment",
       "description": "Creators of Cyanide & Happiness.",
-      "category": "YouTube"
+      "category": "YouTube",
+      "featured": true
     },
     {
       "title": "Games Done Quick",
