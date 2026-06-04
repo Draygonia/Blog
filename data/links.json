@@ -181,7 +181,8 @@
       "title": "Meatcanyon",
       "url": "https://www.youtube.com/@meatcanyon",
       "description": "Disturbing animated parodies of pop culture icons.",
-      "category": "YouTube"
+      "category": "YouTube",
+      "featured": true
     },
     {
       "title": "Nostalgia Nerd",
