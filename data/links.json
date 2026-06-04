@@ -144,7 +144,8 @@
       "title": "GGmanlives",
       "url": "https://www.youtube.com/@GGmanlives",
       "description": "Honest, no-nonsense FPS and shooter game reviews.",
-      "category": "YouTube"
+      "category": "YouTube",
+      "featured": true
     },
     {
       "title": "TheOdd1sOut",
