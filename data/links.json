@@ -112,7 +112,8 @@
       "title": "Flashgitz",
       "url": "https://www.youtube.com/@Flashgitz",
       "description": "Crude animated comedy shorts.",
-      "category": "YouTube"
+      "category": "YouTube",
+      "featured": true
     },
     {
       "title": "Explosm Entertainment",
