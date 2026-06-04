@@ -170,7 +170,8 @@
       "title": "LGR",
       "url": "https://www.youtube.com/@LGR",
       "description": "Retro tech and vintage computer reviews by Clint Basinger.",
-      "category": "YouTube"
+      "category": "YouTube",
+      "featured": true
     },
     {
       "title": "Larry Bundy Jr",
